@@ -1,0 +1,26 @@
+{
+  "name": "nstranquist.github.io",
+  "version": "1.0.0",
+  "description": "portfolio site for nstranquist",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nstranquist/nstranquist.github.io.git"
+  },
+  "keywords": [
+    "portfolio",
+    "site"
+  ],
+  "author": "nstranquist",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nstranquist/nstranquist.github.io/issues"
+  },
+  "homepage": "https://github.com/nstranquist/nstranquist.github.io#readme",
+  "dependencies": {
+    "bootstrap": "^4.3.1"
+  }
+}
