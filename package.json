@@ -4,7 +4,8 @@
   "description": "portfolio site for nstranquist",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "dev": "lite-server"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,8 @@
   "homepage": "https://github.com/nstranquist/nstranquist.github.io#readme",
   "dependencies": {
     "bootstrap": "^4.3.1"
+  },
+  "dev-dependencies": {
+    "lite-server": "^2.4.0"
   }
 }
