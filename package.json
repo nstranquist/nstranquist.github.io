@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/nstranquist/nstranquist.github.io/issues"
   },
-  "homepage": "https://github.com/nstranquist/nstranquist.github.io#readme",
+  "homepage": "https://github.com/nstranquist/nstranquist.github.io",
   "dependencies": {
     "bootstrap": "^4.3.1"
   },
