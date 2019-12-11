@@ -83,8 +83,21 @@
         </footer>
 
         <script>
-        // redirect to current portfolio page on page load (if <meta> tag hasn't already redirected the user)
+        // redirect to current portfolio page:
+
+        // simulate a mouse click
         window.location.href = 'http://nstranquist.github.io/dev-portfolio/';
+
+        // simulate an HTTP redirect:
+        setInterval(() => window.location.replace('http://nstranquist.github.io/dev-portfolio/'), 1500);
+
+        if(window.location.href === 'http://nstranquist.github.io/dev-portfolio/') clearInterval()
+        if(window.location.href === 'https://nstranquist.github.io/dev-portfolio/') clearInterval()
+        if(window.location.href === 'http://nstranquist.github.io/dev-portfolio') clearInterval()
+        if(window.location.href === 'https://nstranquist.github.io/dev-portfolio') clearInterval()
+        if(window.location.href === 'nstranquist.github.io/dev-portfolio') clearInterval()
+        if(window.location.href === 'nstranquist.github.io/dev-portfolio/') clearInterval()
+        
         </script>
     <body>
 </html>
