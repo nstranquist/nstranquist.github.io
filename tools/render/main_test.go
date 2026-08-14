@@ -167,6 +167,23 @@ func TestRenderedPagesLinkContract(t *testing.T) {
 	if len(cat.Glossary) > 0 && !strings.Contains(home, cat.Glossary[0].Term) {
 		t.Fatal("index must render glossary terms")
 	}
+	if !strings.Contains(home, `src="site.js"`) || !strings.Contains(home, `data-theme-toggle`) {
+		t.Fatal("index must ship theme + section script")
+	}
+	first := cat.Featured[0]
+	anchor := "#work-" + strings.TrimPrefix(first.ID, "product.")
+	if !strings.Contains(home, `id="`+strings.TrimPrefix(anchor, "#")+`"`) {
+		t.Fatal("work cards must have stable in-page ids")
+	}
+	if !strings.Contains(home, `href="`+anchor+`"`) {
+		t.Fatal("catalog names must jump to the on-page write-up")
+	}
+	if strings.Contains(home, `href="`+anchor+`" target="_blank"`) {
+		t.Fatal("in-page work jumps must stay same-tab")
+	}
+	if !strings.Contains(home, `data-accent="teal"`) {
+		t.Fatal("work cards must carry product accents")
+	}
 }
 
 func TestStickyNavContractInStylesheet(t *testing.T) {

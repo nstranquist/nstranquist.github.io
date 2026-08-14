@@ -33,16 +33,18 @@ func renderIndex(cat Catalog) string {
 		fmt.Fprintf(&b, "<p class=\"thesis\">%s</p>\n", xml(para))
 	}
 	b.WriteString("<div class=\"chips\"><span class=\"chip\">Platforms</span><span class=\"chip\">Local tools</span><span class=\"chip\">Full-stack</span></div>\n")
+	b.WriteString("<p class=\"hero-actions\">" + href("#work", "text-link") + "Read the work</a></p>\n")
 	b.WriteString("</section>\n")
 
 	b.WriteString("<section class=\"section wrap\" id=\"catalog\">\n")
 	b.WriteString("<div class=\"section-head\"><h2>Catalog</h2>")
 	fmt.Fprintf(&b, "<p class=\"meta\">%d products · tagged releases</p></div>\n", len(cat.Featured))
 	b.WriteString("<div class=\"catalog-board\"><table>\n")
-	b.WriteString("<caption>Public catalog of products</caption>\n")
-	b.WriteString("<thead><tr><th>Product</th><th>Kind</th><th>Stack</th><th>License</th><th>Release</th></tr></thead>\n<tbody>\n")
-	for _, p := range cat.Featured {
-		fmt.Fprintf(&b, "<tr><td data-label=\"Product\">%s<span class=\"product-name\">%s</span><span class=\"product-id\">%s</span></a></td>", href(p.URL, ""), xml(p.Name), xml(p.Repo))
+	b.WriteString("<caption>Public catalog of products. Product names jump to the write-up on this page. Release tags open the public GitHub release.</caption>\n")
+	b.WriteString("<thead><tr><th></th><th>Product</th><th>Kind</th><th>Stack</th><th>License</th><th>Release</th></tr></thead>\n<tbody>\n")
+	for i, p := range cat.Featured {
+		fmt.Fprintf(&b, "<tr><td data-label=\"#\" class=\"idx\">%02d</td>", i+1)
+		fmt.Fprintf(&b, "<td data-label=\"Product\">%s<span class=\"product-name\">%s</span><span class=\"product-id\">%s</span></a></td>", href("#"+workID(p), ""), xml(p.Name), xml(p.Repo))
 		fmt.Fprintf(&b, "<td data-label=\"Kind\" class=\"lane\">%s</td>", xml(p.Lane))
 		fmt.Fprintf(&b, "<td data-label=\"Stack\" class=\"stack\">%s</td>", xml(p.Language))
 		fmt.Fprintf(&b, "<td data-label=\"License\"><span class=\"license\">%s</span></td>", xml(p.License))
@@ -54,17 +56,22 @@ func renderIndex(cat Catalog) string {
 	}
 	b.WriteString("</tbody></table>\n<p class=\"catalog-note\">" + xml(note) + "</p></div>\n</section>\n")
 
-	b.WriteString("<section class=\"section wrap work\" id=\"work\">\n<h2>Selected work</h2>\n<div class=\"work-list\">\n")
-	for _, p := range cat.Featured {
-		b.WriteString("<article class=\"work-card\">\n")
-		fmt.Fprintf(&b, "<div class=\"work-card-top\"><h3>%s%s</a></h3><span class=\"meta\">%s</span></div>\n", href(p.URL, ""), xml(p.Name), xml(p.Lane))
+	b.WriteString("<section class=\"section wrap work\" id=\"work\">\n<div class=\"section-head\"><h2>Selected work</h2><p class=\"meta\">Source and release on each card</p></div>\n<div class=\"work-list\">\n")
+	for i, p := range cat.Featured {
+		fmt.Fprintf(&b, "<article class=\"work-card\" id=\"%s\" data-accent=\"%s\">\n", xml(workID(p)), xml(accentFor(p.ID)))
+		fmt.Fprintf(&b, "<div class=\"work-card-top\"><p class=\"work-num\">%02d</p><span class=\"meta\">%s</span></div>\n", i+1, xml(p.Lane))
+		fmt.Fprintf(&b, "<h3>%s%s</a></h3>\n", href(p.URL, ""), xml(p.Name))
+		if p.Summary != "" {
+			fmt.Fprintf(&b, "<p class=\"work-summary\">%s</p>\n", xml(p.Summary))
+		}
 		fmt.Fprintf(&b, "<p>%s</p>\n", xml(collapseWS(p.Detail)))
 		b.WriteString("<p class=\"work-meta\">")
-		fmt.Fprintf(&b, "<span>%s</span><span>%s</span>%s%s</a>", xml(p.Language), xml(p.License), href(p.ProofURL, ""), xml(p.Proof))
+		fmt.Fprintf(&b, "<span>%s</span><span>%s</span>", xml(p.Language), xml(p.License))
 		if p.Metric.Value != "" {
 			fmt.Fprintf(&b, "<span class=\"metric\">%s: %s</span>", xml(p.Metric.Label), xml(p.Metric.Value))
 		}
-		b.WriteString("</p>\n</article>\n")
+		b.WriteString("</p>\n<p class=\"work-actions\">")
+		fmt.Fprintf(&b, "%sSource</a>%sRelease %s</a></p>\n</article>\n", href(p.URL, ""), href(p.ProofURL, ""), xml(p.Proof))
 	}
 	b.WriteString("</div>\n</section>\n")
 
@@ -125,6 +132,7 @@ func pageHead(id Identity, title, description, canonical, skip, skipLabel string
 	b.WriteString("<meta name=\"theme-color\" content=\"#10100f\">\n")
 	b.WriteString("<link rel=\"icon\" href=\"assets/mark.svg\" type=\"image/svg+xml\">\n")
 	b.WriteString("<link rel=\"stylesheet\" href=\"site.css\">\n")
+	b.WriteString("<script src=\"site.js\" defer></script>\n")
 	b.WriteString("</head>\n<body>\n")
 	fmt.Fprintf(&b, "<a class=\"skip\" href=\"%s\">%s</a>\n", xml(skip), xml(skipLabel))
 	return b.String()
@@ -139,8 +147,15 @@ func siteHeader(id Identity, onHome bool) string {
 	b.WriteString("<header class=\"site-header\">\n<div class=\"wrap\">\n")
 	b.WriteString(href("./", "brand") + markSVG() + "<span class=\"brand-name\">Public catalog</span></a>\n")
 	b.WriteString("<nav aria-label=\"Primary\">\n")
-	fmt.Fprintf(&b, "%sCatalog</a>\n%sWork</a>\n%sApproach</a>\n%sTerms</a>\n%sGitHub</a>\n", href(catalog, ""), href(work, ""), href(approach, ""), href(glossary, ""), href(id.GitHub, ""))
-	b.WriteString("</nav>\n</div>\n</header>\n")
+	fmt.Fprintf(&b, "%s</a>\n%s</a>\n%s</a>\n%s</a>\n%sGitHub</a>\n",
+		navItem(catalog, "catalog", "Catalog"),
+		navItem(work, "work", "Work"),
+		navItem(approach, "approach", "Approach"),
+		navItem(glossary, "glossary", "Terms"),
+		href(id.GitHub, ""))
+	b.WriteString("</nav>\n")
+	b.WriteString("<button type=\"button\" class=\"theme-toggle\" data-theme-toggle aria-label=\"Color theme: System. Switch theme\">System</button>\n")
+	b.WriteString("</div>\n</header>\n")
 	return b.String()
 }
 
@@ -175,6 +190,33 @@ func renderMark() string {
 
 func renderRobots(cat Catalog) string {
 	return "User-agent: *\nAllow: /\nSitemap: " + strings.TrimRight(cat.Identity.Site, "/") + "/\n"
+}
+
+func navItem(url, section, label string) string {
+	return fmt.Sprintf(`<a href="%s" data-section="%s">%s`, xml(url), xml(section), xml(label))
+}
+
+func workID(p Product) string {
+	return "work-" + strings.TrimPrefix(p.ID, "product.")
+}
+
+func accentFor(id string) string {
+	switch id {
+	case "product.docs-puller":
+		return "teal"
+	case "product.nicos-catalog":
+		return "cobalt"
+	case "product.openbook":
+		return "ember"
+	case "product.agent-ops":
+		return "mint"
+	case "product.nicos-hidden-menubar":
+		return "violet"
+	case "product.jobkit":
+		return "gold"
+	default:
+		return "cobalt"
+	}
 }
 
 func xml(s string) string {
