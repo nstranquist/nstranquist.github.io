@@ -7,7 +7,8 @@ in [`nstranquist/nstranquist`](https://github.com/nstranquist/nstranquist) and
 renders on [github.com/nstranquist](https://github.com/nstranquist).
 
 `catalog.yaml` is the source of truth. `tools/render` writes `index.html` and
-`404.html`. Featured products are showcase-ready public extracts only.
+`404.html`. Featured products are public, licensed, and tagged. Private work
+stays off this site.
 
 ```sh
 make verify

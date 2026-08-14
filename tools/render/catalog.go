@@ -9,11 +9,13 @@ import (
 )
 
 type Catalog struct {
-	SchemaVersion int         `yaml:"schema_version"`
-	Identity      Identity    `yaml:"identity"`
-	Featured      []Product   `yaml:"featured"`
-	Toolbox       []string    `yaml:"toolbox"`
-	Principles    []Principle `yaml:"principles"`
+	SchemaVersion int             `yaml:"schema_version"`
+	Identity      Identity        `yaml:"identity"`
+	Featured      []Product       `yaml:"featured"`
+	Toolbox       []string        `yaml:"toolbox"`
+	Principles    []Principle     `yaml:"principles"`
+	Footnote      string          `yaml:"footnote"`
+	Glossary      []GlossaryEntry `yaml:"glossary"`
 }
 
 type Identity struct {
@@ -21,9 +23,15 @@ type Identity struct {
 	Role     string `yaml:"role"`
 	Location string `yaml:"location"`
 	Thesis   string `yaml:"thesis"`
+	Intro    string `yaml:"intro"`
 	GitHub   string `yaml:"github"`
 	LinkedIn string `yaml:"linkedin"`
 	Site     string `yaml:"site"`
+}
+
+type GlossaryEntry struct {
+	Term    string `yaml:"term"`
+	Meaning string `yaml:"meaning"`
 }
 
 type Product struct {
@@ -73,8 +81,14 @@ func (c Catalog) validate() error {
 	if strings.TrimSpace(c.Identity.Name) == "" || strings.TrimSpace(c.Identity.Site) == "" {
 		return fmt.Errorf("identity.name and identity.site are required")
 	}
+	if strings.TrimSpace(c.Identity.Intro) == "" {
+		return fmt.Errorf("identity.intro is required")
+	}
 	if len(c.Featured) == 0 {
 		return fmt.Errorf("featured catalog is empty")
+	}
+	if len(c.Glossary) == 0 {
+		return fmt.Errorf("glossary is required")
 	}
 	seen := map[string]struct{}{}
 	for i, p := range c.Featured {

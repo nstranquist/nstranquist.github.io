@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -71,6 +72,20 @@ func TestIndexIsASiteNotAGreeting(t *testing.T) {
 	if !strings.Contains(html, "synthetic-fixture") {
 		t.Fatal("jobkit boundary missing")
 	}
+	if !strings.Contains(html, "id=\"glossary\"") || !strings.Contains(html, "Fail-closed") {
+		t.Fatal("index must include a glossary for remaining terms")
+	}
+	for _, phrase := range []string{
+		"inspectable extract",
+		"claim boundary",
+		"public extracts",
+		"AI infrastructure",
+		"public extract",
+	} {
+		if strings.Contains(strings.ToLower(html), phrase) {
+			t.Errorf("index still uses factory phrasing %q", phrase)
+		}
+	}
 	for _, p := range loadTestCatalog(t).Featured {
 		if !strings.Contains(html, p.URL) || !strings.Contains(html, p.ProofURL) {
 			t.Errorf("missing proof for %s", p.ID)
@@ -98,4 +113,126 @@ func TestRenderCheck(t *testing.T) {
 	if err := run(root, true); err != nil {
 		t.Fatal(err)
 	}
+}
+
+func TestHrefSplitsOutboundAndSameSite(t *testing.T) {
+	out := href("https://github.com/nstranquist/docs-puller", "proof")
+	if !strings.Contains(out, `target="_blank"`) || !strings.Contains(out, `rel="noopener noreferrer"`) {
+		t.Fatalf("outbound href missing new-tab contract: %s", out)
+	}
+	if !strings.Contains(out, `class="proof"`) {
+		t.Fatalf("class not forwarded: %s", out)
+	}
+	same := href("#work", "")
+	if strings.Contains(same, `target="_blank"`) {
+		t.Fatalf("in-page hash must stay same-tab: %s", same)
+	}
+	home := href("./", "brand")
+	if strings.Contains(home, `target="_blank"`) {
+		t.Fatalf("home link must stay same-tab: %s", home)
+	}
+}
+
+func TestRenderedPagesLinkContract(t *testing.T) {
+	cat := loadTestCatalog(t)
+	home := renderIndex(cat)
+	missing := render404(cat)
+	assertLinkContract(t, "index", home)
+	assertLinkContract(t, "404", missing)
+	for _, p := range cat.Featured {
+		if !strings.Contains(home, `href="`+p.URL+`" target="_blank" rel="noopener noreferrer"`) {
+			t.Errorf("index missing new-tab product link for %s", p.ID)
+		}
+		if !strings.Contains(home, `href="`+p.ProofURL+`" target="_blank" rel="noopener noreferrer"`) &&
+			!strings.Contains(home, `href="`+p.ProofURL+`" class="proof" target="_blank" rel="noopener noreferrer"`) {
+			t.Errorf("index missing new-tab proof link for %s", p.ID)
+		}
+	}
+	if strings.Contains(missing, `href="#catalog"`) || strings.Contains(missing, `href="#work"`) || strings.Contains(missing, `href="#approach"`) || strings.Contains(missing, `href="#glossary"`) {
+		t.Fatal("404 must not use bare hash nav to missing sections")
+	}
+	if !strings.Contains(missing, `href="./#catalog"`) || !strings.Contains(missing, `href="./#work"`) || !strings.Contains(missing, `href="./#approach"`) || !strings.Contains(missing, `href="./#glossary"`) {
+		t.Fatal("404 in-site nav should send visitors home to those sections")
+	}
+	if strings.Contains(missing, `href="./" target="_blank"`) {
+		t.Fatal("404 return/home must stay same-tab")
+	}
+	if cat.Identity.Intro != "" && !strings.Contains(home, collapseWS(cat.Identity.Intro)) {
+		t.Fatal("index must render identity.intro")
+	}
+	if len(cat.Glossary) > 0 && !strings.Contains(home, cat.Glossary[0].Term) {
+		t.Fatal("index must render glossary terms")
+	}
+}
+
+func TestStickyNavContractInStylesheet(t *testing.T) {
+	css, err := os.ReadFile(filepath.Join(repoRoot(t), "site.css"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	text := string(css)
+	if !strings.Contains(text, "position: sticky") || !strings.Contains(text, "top: 0") {
+		t.Fatal("site.css must pin .site-header after scroll")
+	}
+	if !strings.Contains(text, "scroll-padding-top") {
+		t.Fatal("site.css must offset in-page jumps so headings are not under the header")
+	}
+	if !strings.Contains(text, "--header-h") {
+		t.Fatal("header height token missing for scroll offset")
+	}
+}
+
+func TestShippedPagesMatchRenderer(t *testing.T) {
+	if err := run(repoRoot(t), true); err != nil {
+		t.Fatal(err)
+	}
+}
+
+type parsedAnchor struct {
+	href, target, rel string
+}
+
+func assertLinkContract(t *testing.T, label, page string) {
+	t.Helper()
+	for _, a := range parseAnchors(page) {
+		if a.href == "" {
+			t.Errorf("%s: anchor missing href", label)
+			continue
+		}
+		offsite := strings.HasPrefix(a.href, "http://") || strings.HasPrefix(a.href, "https://")
+		if offsite {
+			if a.target != "_blank" {
+				t.Errorf("%s: %s must open in a new tab", label, a.href)
+			}
+			if !strings.Contains(a.rel, "noopener") {
+				t.Errorf("%s: %s must include rel=noopener", label, a.href)
+			}
+			continue
+		}
+		if a.target == "_blank" {
+			t.Errorf("%s: same-site %s must stay in this tab", label, a.href)
+		}
+	}
+}
+
+var anchorRe = regexp.MustCompile(`<a\s+([^>]+)>`)
+var attrRe = regexp.MustCompile(`([A-Za-z0-9:-]+)="([^"]*)"`)
+
+func parseAnchors(page string) []parsedAnchor {
+	var out []parsedAnchor
+	for _, m := range anchorRe.FindAllStringSubmatch(page, -1) {
+		a := parsedAnchor{}
+		for _, attr := range attrRe.FindAllStringSubmatch(m[1], -1) {
+			switch attr[1] {
+			case "href":
+				a.href = attr[2]
+			case "target":
+				a.target = attr[2]
+			case "rel":
+				a.rel = attr[2]
+			}
+		}
+		out = append(out, a)
+	}
+	return out
 }
