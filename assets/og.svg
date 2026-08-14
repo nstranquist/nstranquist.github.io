@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img">
+  <rect width="1200" height="630" fill="#10100f"/>
+  <rect x="48" y="48" width="1104" height="534" rx="28" fill="none" stroke="rgba(240,238,231,0.16)"/>
+  <rect x="88" y="210" width="28" height="28" rx="6" fill="#5c7cff"/>
+  <rect x="124" y="210" width="28" height="28" rx="6" fill="rgba(240,238,231,0.08)"/>
+  <rect x="160" y="210" width="28" height="28" rx="6" fill="rgba(240,238,231,0.08)"/>
+  <rect x="196" y="210" width="28" height="28" rx="6" fill="#5c7cff"/>
+  <rect x="88" y="246" width="28" height="28" rx="6" fill="#5c7cff"/>
+  <rect x="124" y="246" width="28" height="28" rx="6" fill="#5c7cff"/>
+  <rect x="160" y="246" width="28" height="28" rx="6" fill="rgba(240,238,231,0.08)"/>
+  <rect x="196" y="246" width="28" height="28" rx="6" fill="#5c7cff"/>
+  <rect x="88" y="282" width="28" height="28" rx="6" fill="#5c7cff"/>
+  <rect x="124" y="282" width="28" height="28" rx="6" fill="rgba(240,238,231,0.08)"/>
+  <rect x="160" y="282" width="28" height="28" rx="6" fill="#5c7cff"/>
+  <rect x="196" y="282" width="28" height="28" rx="6" fill="#5c7cff"/>
+  <rect x="88" y="318" width="28" height="28" rx="6" fill="#5c7cff"/>
+  <rect x="124" y="318" width="28" height="28" rx="6" fill="rgba(240,238,231,0.08)"/>
+  <rect x="160" y="318" width="28" height="28" rx="6" fill="rgba(240,238,231,0.08)"/>
+  <rect x="196" y="318" width="28" height="28" rx="6" fill="#5c7cff"/>
+  <text x="268" y="262" fill="#f0eee7" font-family="Palatino, 'Times New Roman', serif" font-size="64">Nico Stranquist</text>
+  <text x="268" y="318" fill="#918f88" font-family="system-ui, sans-serif" font-size="28">Senior software engineer</text>
+  <text x="268" y="368" fill="#5c7cff" font-family="ui-monospace, Menlo, monospace" font-size="22">public catalog · inspectable source</text>
+</svg>

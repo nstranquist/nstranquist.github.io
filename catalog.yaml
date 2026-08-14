@@ -1,0 +1,121 @@
+# Public catalog for https://nstranquist.github.io/
+# Featured rows are showcase-ready only (public + license + CI + copyright + secrets).
+# Keep this set aligned with ~/dev/nstranquist/catalog.yaml (the GitHub profile README).
+schema_version: 1
+identity:
+  name: Nico Stranquist
+  role: Senior software engineer
+  location: St. Louis
+  thesis: Developer platforms, local-first AI infrastructure, and full-stack products that can prove what they claim.
+  github: https://github.com/nstranquist
+  linkedin: https://linkedin.com/in/nstranquist
+  site: https://nstranquist.github.io
+featured:
+  - id: product.docs-puller
+    name: docs-puller
+    repo: nstranquist/docs-puller
+    url: https://github.com/nstranquist/docs-puller
+    proof_url: https://github.com/nstranquist/docs-puller/releases/tag/v0.5.0
+    license: Apache-2.0
+    language: Go
+    lane: retrieval
+    proof: v0.5.0
+    summary: Local-first documentation retrieval for AI agents.
+    detail: >-
+      Mirrors vendor and project docs to Markdown, indexes them with SQLite FTS5,
+      and searches them privately. Quality is a product feature: the public BM25
+      sample reaches 95.8% Hit@1 and 100% Hit@5, and anyone can rerun it against
+      pinned pages.
+    metric:
+      label: public BM25 sample
+      value: 95.8% Hit@1 · 100% Hit@5
+  - id: product.nicos-catalog
+    name: Nicos Catalog
+    repo: nstranquist/nicos-catalog
+    url: https://github.com/nstranquist/nicos-catalog
+    proof_url: https://github.com/nstranquist/nicos-catalog/releases/tag/v0.1.1
+    license: Apache-2.0
+    language: Go
+    lane: catalog engine
+    proof: v0.1.1
+    summary: A typed, local-first software-catalog engine.
+    detail: >-
+      Provider plugins, typed entities, full-text and relationship search, and
+      drift checks that fail closed when the catalog and the source system
+      disagree. The public core excludes personal telemetry, valuation, and
+      host-specific policy.
+  - id: product.openbook
+    name: Openbook
+    repo: nstranquist/openbook
+    url: https://github.com/nstranquist/openbook
+    proof_url: https://github.com/nstranquist/openbook/releases/tag/v0.1.0
+    license: MIT
+    language: TypeScript
+    lane: realtime product
+    proof: v0.1.0
+    summary: A realtime social network on Convex.
+    detail: >-
+      Identity, a friend graph, a visibility-scoped feed, comments,
+      notifications, and messages — live-synced through reactive queries.
+      MIT, with a public v0.1.0 release.
+  - id: product.agent-ops
+    name: agent-ops
+    repo: nstranquist/agent-ops
+    url: https://github.com/nstranquist/agent-ops
+    proof_url: https://github.com/nstranquist/agent-ops/releases/tag/v0.3.2
+    license: MIT
+    language: Go
+    lane: agent operations
+    proof: v0.3.2
+    summary: Local-first agent operations, with receipts.
+    detail: >-
+      Trace what an agent did, what it saw, what it was allowed to call, and
+      what was proven. Every answer is a durable local artifact. Nothing phones
+      home, and nothing asks the model to grade itself.
+  - id: product.nicos-hidden-menubar
+    name: Nicos Hidden Bar
+    repo: nstranquist/nicos-hidden-menubar
+    url: https://github.com/nstranquist/nicos-hidden-menubar
+    proof_url: https://github.com/nstranquist/nicos-hidden-menubar/releases/tag/v0.2.0
+    license: GPL-3.0
+    language: Swift
+    lane: native macOS
+    proof: v0.2.0
+    summary: A native menu-bar organizer for macOS.
+    detail: >-
+      Visible, hidden, and always-hidden lanes, notch-aware overflow, and a
+      searchable reveal panel. Local-first: no account, no network service.
+      Public source release under GPL-3.0.
+  - id: product.jobkit
+    name: JobKit
+    repo: nstranquist/jobkit
+    url: https://github.com/nstranquist/jobkit
+    proof_url: https://github.com/nstranquist/jobkit/releases/tag/v0.9.0
+    license: MIT
+    language: Go
+    lane: career tooling
+    proof: v0.9.0
+    summary: An offline-first job-search and resume CLI.
+    detail: >-
+      Profiles, eligibility gates, claim allowlists that fail closed, and
+      human-reviewed apply plans. The public tree is synthetic-fixture only —
+      no personal profile or job-application data.
+toolbox:
+  - Go
+  - TypeScript
+  - React
+  - Node.js
+  - Convex
+  - Swift
+  - Python
+  - PostgreSQL
+  - SQLite
+  - AWS
+  - Cloudflare
+principles:
+  - title: Local-first
+    body: The default path works offline. Cloud is optional, not a prerequisite.
+  - title: Fail-closed
+    body: Catalogs drift-check. Claims need evidence. Ambiguous state does not silently pass.
+  - title: Proof, not posture
+    body: Public evaluations, green CI, and tagged releases. No invented adoption, customers, or revenue.

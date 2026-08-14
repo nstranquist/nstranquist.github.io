@@ -1,11 +1,15 @@
-# Developer Portfolio [Live](https://nicostranquist.com)
+# nstranquist.github.io
 
-This project is a webapp where I can write content and showoff my developer portfolio.  
+Public catalog site for [nstranquist.github.io](https://nstranquist.github.io/).
 
-### Some Tools Used in this Project:  
-- material-ui: A front-end UI library for React.js, which was used to quickly scaffold the user interface  
-- material-reacts-starter: A template built on create-react-app that provides a barebones cra project shipped with material-ui  
-- React.js, placekitten, npm, and other parts of the enormous javascript ecosystem. See package.json for more  
+This is the GitHub Pages user site. It is not the profile README — that lives
+in [`nstranquist/nstranquist`](https://github.com/nstranquist/nstranquist) and
+renders on [github.com/nstranquist](https://github.com/nstranquist).
 
-### Next Steps:  
-See 'issues' for future goals for this project  
+`catalog.yaml` is the source of truth. `tools/render` writes `index.html` and
+`404.html`. Featured products are showcase-ready public extracts only.
+
+```sh
+make verify
+make serve   # http://127.0.0.1:8766/
+```
