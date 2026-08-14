@@ -29,7 +29,9 @@ func renderIndex(cat Catalog) string {
 	b.WriteString("<p class=\"kicker\"><span class=\"kicker-dot\" aria-hidden=\"true\"></span>Public catalog · tagged releases</p>\n")
 	fmt.Fprintf(&b, "<h1>%s</h1>\n", xml(id.Name))
 	fmt.Fprintf(&b, "<p class=\"lede\">%s, %s.</p>\n", xml(id.Role), xml(id.Location))
-	fmt.Fprintf(&b, "<p class=\"thesis\">%s</p>\n", xml(collapseWS(id.Intro)))
+	for _, para := range splitParas(id.Intro) {
+		fmt.Fprintf(&b, "<p class=\"thesis\">%s</p>\n", xml(para))
+	}
 	b.WriteString("<div class=\"chips\"><span class=\"chip\">Platforms</span><span class=\"chip\">Local tools</span><span class=\"chip\">Full-stack</span></div>\n")
 	b.WriteString("</section>\n")
 
@@ -72,11 +74,6 @@ func renderIndex(cat Catalog) string {
 	}
 	b.WriteString("</div>\n</section>\n")
 
-	b.WriteString("<section class=\"section wrap\" id=\"toolbox\">\n<div class=\"section-head\"><h2>Toolbox</h2></div>\n<div class=\"toolbox\">")
-	for _, tool := range cat.Toolbox {
-		fmt.Fprintf(&b, "<span class=\"chip\">%s</span>", xml(tool))
-	}
-	b.WriteString("</div>\n</section>\n")
 	if len(cat.Glossary) > 0 {
 		b.WriteString("<section class=\"section wrap glossary\" id=\"glossary\">\n<div class=\"section-head\"><h2>Terms</h2></div>\n")
 		b.WriteString("<p class=\"lede-note\">Short definitions for words used on this page.</p>\n<dl>\n")
@@ -85,6 +82,12 @@ func renderIndex(cat Catalog) string {
 		}
 		b.WriteString("</dl>\n</section>\n")
 	}
+
+	b.WriteString("<section class=\"section wrap\" id=\"toolbox\">\n<div class=\"section-head\"><h2>Toolbox</h2></div>\n<div class=\"toolbox\">")
+	for _, tool := range cat.Toolbox {
+		fmt.Fprintf(&b, "<span class=\"chip\">%s</span>", xml(tool))
+	}
+	b.WriteString("</div>\n</section>\n")
 	b.WriteString("</main>\n")
 	b.WriteString(siteFooter(id))
 	b.WriteString("</body>\n</html>\n")
@@ -180,4 +183,18 @@ func xml(s string) string {
 
 func collapseWS(s string) string {
 	return strings.Join(strings.Fields(s), " ")
+}
+
+func splitParas(s string) []string {
+	var out []string
+	for _, para := range strings.Split(s, "\n\n") {
+		para = collapseWS(para)
+		if para != "" {
+			out = append(out, para)
+		}
+	}
+	if len(out) == 0 && collapseWS(s) != "" {
+		return []string{collapseWS(s)}
+	}
+	return out
 }

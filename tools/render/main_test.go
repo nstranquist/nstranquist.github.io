@@ -157,8 +157,12 @@ func TestRenderedPagesLinkContract(t *testing.T) {
 	if strings.Contains(missing, `href="./" target="_blank"`) {
 		t.Fatal("404 return/home must stay same-tab")
 	}
-	if cat.Identity.Intro != "" && !strings.Contains(home, collapseWS(cat.Identity.Intro)) {
-		t.Fatal("index must render identity.intro")
+	if cat.Identity.Intro != "" {
+		for _, para := range splitParas(cat.Identity.Intro) {
+			if !strings.Contains(home, para) {
+				t.Fatal("index must render identity.intro")
+			}
+		}
 	}
 	if len(cat.Glossary) > 0 && !strings.Contains(home, cat.Glossary[0].Term) {
 		t.Fatal("index must render glossary terms")

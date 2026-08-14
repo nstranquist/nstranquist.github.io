@@ -7,11 +7,12 @@ identity:
   role: Senior software engineer
   location: St. Louis
   thesis: Developer platforms, local developer tools, and full-stack products.
-  intro: >-
+  intro: |
     I build developer platforms, local developer tools, and full-stack products.
-    These are the public products I will stand behind. Each product has a
-    license and a tagged release you can inspect. Private work and unfinished
-    projects stay off this page.
+
+    These are the public products I will stand behind. Each product has a license
+    and a tagged release you can inspect. Private work and unfinished projects
+    stay off this page.
   github: https://github.com/nstranquist
   linkedin: https://linkedin.com/in/nstranquist
   site: https://nstranquist.github.io
@@ -120,15 +121,15 @@ toolbox:
   - Cloudflare
 principles:
   - title: Local-first
-    body: The default path works on your computer. Cloud is optional, not required.
+    body: The default path works on your computer. A cloud account is not required.
   - title: Fail-closed
-    body: If a catalog is out of date or a claim has no evidence, the tool stops. Incomplete state does not pass.
+    body: If a check cannot prove the result is safe, the tool stops. Missing evidence is treated as a failure.
   - title: Proof, not posture
-    body: Public evaluations, passing CI, and tagged releases. No invented users, customers, or revenue.
+    body: I publish evaluations, passing CI, and tagged releases. I do not invent users, customers, or revenue.
 footnote: Public products only. Unproven claims are rejected. No invented numbers.
 glossary:
   - term: Local-first
-    meaning: The tool works on your computer. An account or cloud service is not required.
+    meaning: The tool works on your computer. A cloud account is not required.
   - term: Fail-closed
     meaning: If a check cannot prove the result is safe, the command stops. Missing evidence is treated as a failure.
   - term: Drift check

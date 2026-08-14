@@ -231,6 +231,10 @@ h1 {
   line-height: 1.65;
 }
 
+.thesis + .thesis {
+  margin-top: 0.85rem;
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;
