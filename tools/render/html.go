@@ -22,25 +22,25 @@ func href(url string, class string) string {
 func renderIndex(cat Catalog) string {
 	id := cat.Identity
 	var b strings.Builder
-	b.WriteString(pageHead(id, id.Name+" — public catalog", collapseWS(id.Thesis), id.Site+"/", "#work", "Skip to work"))
+	b.WriteString(pageHead(id, id.Name, collapseWS(id.Thesis), id.Site+"/", "#work", "Skip to work"))
 	b.WriteString(siteHeader(id, true, len(cat.AlsoPublic) > 0))
 	b.WriteString("<main id=\"main\">\n")
 	b.WriteString("<section class=\"hero wrap\">\n")
-	b.WriteString("<p class=\"kicker\"><span class=\"kicker-dot\" aria-hidden=\"true\"></span>Public catalog · tagged releases</p>\n")
+	b.WriteString("<p class=\"kicker\"><span class=\"kicker-dot\" aria-hidden=\"true\"></span>Public GitHub work</p>\n")
 	fmt.Fprintf(&b, "<h1>%s</h1>\n", xml(id.Name))
 	fmt.Fprintf(&b, "<p class=\"lede\">%s, %s.</p>\n", xml(id.Role), xml(id.Location))
 	for _, para := range splitParas(id.Intro) {
 		fmt.Fprintf(&b, "<p class=\"thesis\">%s</p>\n", xml(para))
 	}
 	b.WriteString("<div class=\"chips\"><span class=\"chip\">Platforms</span><span class=\"chip\">Local tools</span><span class=\"chip\">Full-stack</span></div>\n")
-	b.WriteString("<p class=\"hero-actions\">" + href("#work", "text-link") + "Read the work</a></p>\n")
+	b.WriteString("<p class=\"hero-actions\">" + href("#work", "text-link") + "See the work</a></p>\n")
 	b.WriteString("</section>\n")
 
 	b.WriteString("<section class=\"section wrap\" id=\"catalog\">\n")
 	b.WriteString("<div class=\"section-head\"><h2>Catalog</h2>")
-	fmt.Fprintf(&b, "<p class=\"meta\">%d products · tagged releases</p></div>\n", len(cat.Featured))
+	fmt.Fprintf(&b, "<p class=\"meta\">%d with GitHub releases</p></div>\n", len(cat.Featured))
 	b.WriteString("<div class=\"catalog-board\"><table>\n")
-	b.WriteString("<caption>Public catalog of products. Product names jump to the write-up on this page. Release tags open the public GitHub release.</caption>\n")
+	b.WriteString("<caption>Names jump to the write-up. Versions open GitHub.</caption>\n")
 	b.WriteString("<thead><tr><th></th><th>Product</th><th>Kind</th><th>Stack</th><th>License</th><th>Release</th></tr></thead>\n<tbody>\n")
 	for i, p := range cat.Featured {
 		fmt.Fprintf(&b, "<tr><td data-label=\"#\" class=\"idx\">%02d</td>", i+1)
@@ -52,7 +52,7 @@ func renderIndex(cat Catalog) string {
 	}
 	note := collapseWS(cat.Footnote)
 	if note == "" {
-		note = "Public products only. Unproven claims are rejected. No invented numbers."
+		note = "Source is on GitHub."
 	}
 	b.WriteString("</tbody></table>\n<p class=\"catalog-note\">" + xml(note) + "</p></div>\n</section>\n")
 
@@ -85,7 +85,7 @@ func renderIndex(cat Catalog) string {
 
 	if len(cat.AlsoPublic) > 0 {
 		b.WriteString("<section class=\"section wrap\" id=\"also-public\">\n")
-		b.WriteString("<div class=\"section-head\"><h2>Also public</h2><p class=\"meta\">Released, not selected work</p></div>\n")
+		b.WriteString("<div class=\"section-head\"><h2>Also on GitHub</h2><p class=\"meta\">Public source, including repos without a tag</p></div>\n")
 		b.WriteString("<ul class=\"also-public\">\n")
 		for _, p := range cat.AlsoPublic {
 			fmt.Fprintf(&b, "<li><strong>%s%s</a></strong> — %s <span class=\"also-meta\">%s · %s · %s%s</a></span></li>\n",
@@ -103,7 +103,7 @@ func renderIndex(cat Catalog) string {
 
 	if len(cat.Glossary) > 0 {
 		b.WriteString("<section class=\"section wrap glossary\" id=\"glossary\">\n<div class=\"section-head\"><h2>Terms</h2></div>\n")
-		b.WriteString("<p class=\"lede-note\">Short definitions for words used on this page.</p>\n<dl>\n")
+		b.WriteString("<p class=\"lede-note\">One term used above.</p>\n<dl>\n")
 		for _, g := range cat.Glossary {
 			fmt.Fprintf(&b, "<div class=\"term\"><dt>%s</dt><dd>%s</dd></div>\n", xml(g.Term), xml(g.Meaning))
 		}
@@ -116,7 +116,7 @@ func renderIndex(cat Catalog) string {
 	}
 	b.WriteString("</div>\n</section>\n")
 	b.WriteString("</main>\n")
-	b.WriteString(siteFooter(id))
+	b.WriteString(siteFooter(id, cat.Footnote))
 	b.WriteString("</body>\n</html>\n")
 	return b.String()
 }
@@ -127,9 +127,9 @@ func render404(cat Catalog) string {
 	b.WriteString(pageHead(id, "Page not found", "That address is not on this site.", id.Site+"/404.html", "./", "Skip to home"))
 	b.WriteString(siteHeader(id, false, false))
 	b.WriteString("<main id=\"main\" class=\"missing wrap\">\n<h1>Page not found.</h1>\n")
-	b.WriteString("<p>That address is not on this site. The public products are on the home page.</p>\n")
+	b.WriteString("<p>That page is not on this site. The home page lists the work.</p>\n")
 	b.WriteString("<p class=\"chips\">" + href("./", "chip") + "Return home</a></p>\n</main>\n")
-	b.WriteString(siteFooter(id))
+	b.WriteString(siteFooter(id, cat.Footnote))
 	b.WriteString("</body>\n</html>\n")
 	return b.String()
 }
@@ -165,11 +165,11 @@ func siteHeader(id Identity, onHome bool, alsoPublic bool) string {
 	}
 	var b strings.Builder
 	b.WriteString("<header class=\"site-header\">\n<div class=\"wrap\">\n")
-	b.WriteString(href("./", "brand") + markSVG() + "<span class=\"brand-name\">Public catalog</span></a>\n")
+	b.WriteString(href("./", "brand") + markSVG() + "<span class=\"brand-name\">" + xml(id.Name) + "</span></a>\n")
 	b.WriteString("<nav aria-label=\"Primary\">\n")
 	fmt.Fprintf(&b, "%s</a>\n%s</a>\n", navItem(catalog, "catalog", "Catalog"), navItem(work, "work", "Work"))
 	if alsoPublic {
-		fmt.Fprintf(&b, "%s</a>\n", navItem(also, "also-public", "Also public"))
+		fmt.Fprintf(&b, "%s</a>\n", navItem(also, "also-public", "Also on GitHub"))
 	}
 	fmt.Fprintf(&b, "%s</a>\n%s</a>\n%sGitHub</a>\n",
 		navItem(approach, "approach", "Approach"),
@@ -181,8 +181,11 @@ func siteHeader(id Identity, onHome bool, alsoPublic bool) string {
 	return b.String()
 }
 
-func siteFooter(id Identity) string {
-	return "<footer class=\"site-footer\">\n<div class=\"wrap\">\n<div><p class=\"brand-name\">" + xml(id.Name) + "</p><p class=\"boundary\">Public products only. Unproven claims are rejected. No invented numbers.</p></div>\n<div class=\"footer-links\">" + href(id.GitHub, "") + "GitHub</a>" + href(id.LinkedIn, "") + "LinkedIn</a></div>\n</div>\n</footer>\n"
+func siteFooter(id Identity, note string) string {
+	if collapseWS(note) == "" {
+		note = "Source is on GitHub."
+	}
+	return "<footer class=\"site-footer\">\n<div class=\"wrap\">\n<div><p class=\"brand-name\">" + xml(id.Name) + "</p><p class=\"boundary\">" + xml(collapseWS(note)) + "</p></div>\n<div class=\"footer-links\">" + href(id.GitHub, "") + "GitHub</a>" + href(id.LinkedIn, "") + "LinkedIn</a></div>\n</div>\n</footer>\n"
 }
 
 func markSVG() string {

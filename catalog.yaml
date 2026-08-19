@@ -7,13 +7,12 @@ identity:
   name: Nico Stranquist
   role: Senior software engineer
   location: St. Louis
-  thesis: Developer platforms, local developer tools, and full-stack products.
+  thesis: Developer tools, native Mac apps, and full-stack products.
   intro: |
-    I build developer platforms, local developer tools, and full-stack products.
+    I build developer tools, native Mac apps, and full-stack products.
 
-    These are public products I will stand behind. Selected work has a tagged
-    GitHub Release you can inspect. A second list names other public source.
-    Missing tags stay visible.
+    This page lists public GitHub work. The first group has tagged releases.
+    The second group is also public, including repos that do not have a tag yet.
   github: https://github.com/nstranquist
   linkedin: https://linkedin.com/in/nstranquist
   site: https://nstranquist.github.io
@@ -31,10 +30,9 @@ featured:
     demo_label: Live demo
     summary: Search vendor and project docs on your machine.
     detail: >-
-      Copies vendor and project docs into Markdown, indexes them with SQLite FTS5,
-      and searches them locally. Quality is measured: the public BM25 sample
-      reaches 95.8% Hit@1 and 100% Hit@5, and anyone can rerun it against
-      pinned pages. A public demo searches the same reviewed sample corpus.
+      Copies docs to Markdown, indexes them with SQLite FTS5, and searches them
+      locally. A public BM25 sample reaches 95.8% Hit@1 and 100% Hit@5. A live
+      demo searches the same sample corpus.
     metric:
       label: public BM25 sample
       value: 95.8% Hit@1 · 100% Hit@5
@@ -49,11 +47,9 @@ featured:
     proof: v0.1.1
     summary: A local engine for software catalogs.
     detail: >-
-      Plugins, typed records, full-text and relationship search, and a drift
-      check that fails when the catalog and the source files disagree. The
-      public core includes a local Explorer UI. It leaves out personal
-      telemetry, valuation, and host-only policy. The GitHub Release is v0.1.1.
-      Later source tags are not a formal release.
+      Full-text and relationship search, plugins, and a check when files no
+      longer match the catalog. Includes a local Explorer UI. The GitHub
+      release is v0.1.1.
   - id: product.openbook
     name: Openbook
     repo: nstranquist/openbook
@@ -63,11 +59,10 @@ featured:
     language: TypeScript
     lane: social app
     proof: v0.1.0
-    summary: A realtime social network on Convex.
+    summary: A realtime social app on Convex.
     detail: >-
-      Accounts, a friend graph, a feed with friends-or-public visibility,
-      comments, notifications, and messages. Updates live through Convex
-      queries. MIT, with a public v0.1.0 release.
+      Accounts, friends, a feed, comments, notifications, and messages.
+      Updates run through Convex queries.
   - id: product.agent-ops
     name: agent-ops
     repo: nstranquist/agent-ops
@@ -79,10 +74,8 @@ featured:
     proof: v0.3.2
     summary: Local records of what an AI agent did.
     detail: >-
-      Trace what an agent did, what it saw, what it was allowed to call, and
-      what was proven. Every answer is saved as a local file (a receipt).
-      Nothing sends data off the machine, and nothing asks the model to score
-      itself.
+      Records what an agent did, what it saw, and what it was allowed to call.
+      Everything stays on your machine.
   - id: product.nicos-hidden-menubar
     name: Nicos Hidden Bar
     repo: nstranquist/nicos-hidden-menubar
@@ -92,11 +85,10 @@ featured:
     language: Swift
     lane: macOS app
     proof: v0.2.0
-    summary: A native menu-bar organizer for macOS.
+    summary: Hide and reveal macOS menu-bar items.
     detail: >-
       Visible, hidden, and always-hidden regions, notch-safe overflow, and a
-      searchable reveal panel. It stays on your Mac: no account, no network
-      service. Public source release under GPL-3.0.
+      searchable reveal panel. No account. No network service.
   - id: product.nicos-slot-dock
     name: Nicos Slot Dock
     repo: nstranquist/nicos-slot-dock
@@ -108,10 +100,9 @@ featured:
     proof: v0.3.6
     summary: A native launcher strip next to the macOS Dock.
     detail: >-
-      Custom application, file, and URL slots, optional Dock merge or mirror,
-      running-app badges, and a reveal from the screen edge or the menu bar.
-      It stays on your Mac. Public source only. There is no signed download
-      binary yet.
+      Custom app, file, and URL slots, optional Dock merge or mirror, running-app
+      badges, and a reveal from the screen edge or the menu bar. Public source.
+      No signed download yet.
   - id: product.jobkit
     name: JobKit
     repo: nstranquist/jobkit
@@ -123,9 +114,8 @@ featured:
     proof: v0.9.0
     summary: An offline job-search and resume CLI.
     detail: >-
-      Profiles, eligibility rules, claim lists that reject unproven numbers,
-      and apply packages a person reviews before sending. The public tree is
-      synthetic-fixture only (example data, not a real resume or job history).
+      Profiles, eligibility rules, and apply packages you review before sending.
+      The public repo uses example data only, not a real resume or job history.
   - id: product.session-pressure
     name: SessionPressure
     repo: nstranquist/session-pressure
@@ -135,11 +125,10 @@ featured:
     language: Go
     lane: host admission
     proof: v0.1.0
-    summary: Local host admission for concurrent coding agents on one Mac.
+    summary: Host admission for concurrent coding agents on one Mac.
     detail: >-
-      Samples CPU, memory, thermal, and disk-write pressure. Admits or defers
-      concurrent agent work on one Mac. Public Apache-2.0 source. No
-      downloadable binary.
+      Reads CPU, memory, thermal, and disk-write pressure, then admits or
+      defers agent work. Public source. No downloadable binary.
   - id: product.keepawake
     name: keepawake
     repo: nstranquist/keepawake
@@ -151,8 +140,7 @@ featured:
     proof: v0.1.3
     summary: Keep a closed-lid Mac awake on purpose.
     detail: >-
-      Combines pmset disablesleep with a managed caffeinate process so a Mac
-      can keep running with the lid closed. Public MIT source.
+      Uses pmset and caffeinate so a Mac can keep running with the lid closed.
 also_public:
   - id: product.wip-commit
     name: wip-commit
@@ -163,7 +151,7 @@ also_public:
     language: Go
     lane: Git safety
     proof: no public tag
-    summary: Guarded split-commit capture for parallel agents.
+    summary: Split commits for parallel agents in a shared Git checkout.
   - id: product.snapref
     name: SnapRef
     repo: nstranquist/snapref
@@ -173,7 +161,7 @@ also_public:
     language: Go
     lane: browser automation
     proof: v0.2.0-rc.1
-    summary: Local-first browser automation for agents.
+    summary: Local browser automation for agents.
   - id: product.ngtm
     name: Nicos GTM
     repo: nstranquist/ngtm
@@ -183,7 +171,7 @@ also_public:
     language: Go
     lane: go-to-market
     proof: no public tag
-    summary: Local go-to-market toolkit with grounded claims.
+    summary: Local go-to-market toolkit. Claims need evidence.
   - id: product.nicos-flag-eval
     name: nicos-flag-eval
     repo: nstranquist/nicos-flag-eval
@@ -193,7 +181,7 @@ also_public:
     language: Go
     lane: feature flags
     proof: no public tag
-    summary: Portable feature-flag evaluator. Synthetic catalog only.
+    summary: Feature-flag evaluator in Go, TypeScript, and Swift. Demo data only.
   - id: product.nicos-window-switcher
     name: Nicos Window Switcher
     repo: nstranquist/nicos-window-switcher
@@ -203,7 +191,7 @@ also_public:
     language: Swift
     lane: macOS app
     proof: no public tag
-    summary: Clean-room macOS window switcher. Public APIs only.
+    summary: macOS window switcher. Lists windows, not apps.
 toolbox:
   - Go
   - TypeScript
@@ -217,23 +205,11 @@ toolbox:
   - AWS
   - Cloudflare
 principles:
-  - title: Local-first
-    body: The default path works on your computer. A cloud account is not required.
-  - title: Fail-closed
-    body: If a check cannot prove the result is safe, the tool stops. Missing evidence is treated as a failure.
-  - title: Proof, not posture
-    body: I publish evaluations, passing CI, and tagged releases. I do not invent users, customers, or revenue.
-footnote: Public products only. Unproven claims are rejected. No invented numbers.
+  - title: On your computer
+    body: The default path runs locally. You do not need a cloud account.
+  - title: Source and releases
+    body: I publish source, tests, and tagged releases. I do not invent users or revenue.
+footnote: Source is on GitHub.
 glossary:
-  - term: Local-first
-    meaning: The tool works on your computer. A cloud account is not required.
-  - term: Fail-closed
-    meaning: If a check cannot prove the result is safe, the command stops. Missing evidence is treated as a failure.
-  - term: Drift check
-    meaning: A comparison that fails when the catalog no longer matches the files it describes.
   - term: BM25
     meaning: A standard keyword search ranker. Hit@1 means the right page ranked first. Hit@5 means it ranked in the top five.
-  - term: Synthetic fixture
-    meaning: Made-up example data used in tests and screenshots. Not a real resume or job history.
-  - term: Receipt
-    meaning: A local file that records what happened so you can check it later.

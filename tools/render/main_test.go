@@ -88,7 +88,7 @@ func TestIndexIsASiteNotAGreeting(t *testing.T) {
 		t.Fatal("selected work must include Nicos Slot Dock v0.3.6")
 	}
 	if !strings.Contains(html, "id=\"also-public\"") {
-		t.Fatal("index must include Also public")
+		t.Fatal("index must include the Also on GitHub section")
 	}
 	for _, needle := range []string{"wip-commit", "snapref", "nstranquist/ngtm", "nicos-flag-eval", "nicos-window-switcher"} {
 		if !strings.Contains(html, needle) {
@@ -98,11 +98,11 @@ func TestIndexIsASiteNotAGreeting(t *testing.T) {
 	if strings.Contains(html, "hearthlight") {
 		t.Fatal("hearthlight is not on this public catalog")
 	}
-	if !strings.Contains(html, "synthetic-fixture") {
-		t.Fatal("jobkit boundary missing")
+	if !strings.Contains(html, "example data only") {
+		t.Fatal("jobkit example-data boundary missing")
 	}
-	if !strings.Contains(html, "id=\"glossary\"") || !strings.Contains(html, "Fail-closed") {
-		t.Fatal("index must include a glossary for remaining terms")
+	if !strings.Contains(html, "id=\"glossary\"") || !strings.Contains(html, "BM25") {
+		t.Fatal("index must define BM25")
 	}
 	for _, phrase := range []string{
 		"inspectable extract",
@@ -110,6 +110,11 @@ func TestIndexIsASiteNotAGreeting(t *testing.T) {
 		"public extracts",
 		"AI infrastructure",
 		"public extract",
+		"stand behind",
+		"proof, not posture",
+		"unproven claims",
+		"fail-closed",
+		"missing tags stay visible",
 	} {
 		if strings.Contains(strings.ToLower(html), phrase) {
 			t.Errorf("index still uses factory phrasing %q", phrase)
