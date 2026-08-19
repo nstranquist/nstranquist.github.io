@@ -17,7 +17,6 @@ var requiredIDs = []string{
 	"product.nicos-slot-dock",
 	"product.jobkit",
 	"product.session-pressure",
-	"product.keepawake",
 }
 
 var forbidden = []string{
@@ -82,7 +81,7 @@ func TestIndexIsASiteNotAGreeting(t *testing.T) {
 		t.Fatal("selected work must include SessionPressure v0.1.0")
 	}
 	if !strings.Contains(html, "keepawake/releases/tag/v0.1.3") {
-		t.Fatal("selected work must include keepawake v0.1.3")
+		t.Fatal("Also on GitHub must include keepawake v0.1.3")
 	}
 	if !strings.Contains(html, "nicos-slot-dock/releases/tag/v0.3.6") {
 		t.Fatal("selected work must include Nicos Slot Dock v0.3.6")
