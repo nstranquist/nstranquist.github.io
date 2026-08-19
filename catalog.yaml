@@ -1,6 +1,7 @@
 # Public catalog for https://nstranquist.github.io/
-# Featured rows are showcase-ready only (public + license + CI + copyright + secrets).
-# Keep this set aligned with ~/dev/nstranquist/catalog.yaml (the GitHub profile README).
+# Featured rows match selected work on the GitHub profile that have a GitHub Release.
+# Keep this set aligned with ~/dev/nstranquist/catalog.yaml. Unreleased public
+# extracts stay off this page. Other tagged releases go under also_public.
 schema_version: 1
 identity:
   name: Nico Stranquist
@@ -50,8 +51,9 @@ featured:
     detail: >-
       Plugins, typed records, full-text and relationship search, and a drift
       check that fails when the catalog and the source files disagree. The
-      public core leaves out personal telemetry, valuation, and host-only
-      policy.
+      public core includes a local Explorer UI. It leaves out personal
+      telemetry, valuation, and host-only policy. The GitHub Release is v0.1.1.
+      Later source tags are not a formal release.
   - id: product.openbook
     name: Openbook
     repo: nstranquist/openbook
@@ -95,6 +97,21 @@ featured:
       Visible, hidden, and always-hidden regions, notch-safe overflow, and a
       searchable reveal panel. It stays on your Mac: no account, no network
       service. Public source release under GPL-3.0.
+  - id: product.nicos-slot-dock
+    name: Nicos Slot Dock
+    repo: nstranquist/nicos-slot-dock
+    url: https://github.com/nstranquist/nicos-slot-dock
+    proof_url: https://github.com/nstranquist/nicos-slot-dock/releases/tag/v0.3.6
+    license: MIT
+    language: Swift
+    lane: macOS app
+    proof: v0.3.6
+    summary: A native launcher strip next to the macOS Dock.
+    detail: >-
+      Custom application, file, and URL slots, optional Dock merge or mirror,
+      running-app badges, and a reveal from the screen edge or the menu bar.
+      It stays on your Mac. Public source only. There is no signed download
+      binary yet.
   - id: product.jobkit
     name: JobKit
     repo: nstranquist/jobkit
@@ -120,6 +137,16 @@ also_public:
     lane: host admission
     proof: v0.1.0
     summary: Local host admission for concurrent coding agents on one Mac.
+  - id: product.keepawake
+    name: keepawake
+    repo: nstranquist/keepawake
+    url: https://github.com/nstranquist/keepawake
+    proof_url: https://github.com/nstranquist/keepawake/releases/tag/v0.1.3
+    license: MIT
+    language: Go
+    lane: macOS utility
+    proof: v0.1.3
+    summary: Keep a closed-lid Mac awake on purpose.
 toolbox:
   - Go
   - TypeScript

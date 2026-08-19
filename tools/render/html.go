@@ -127,7 +127,7 @@ func render404(cat Catalog) string {
 	b.WriteString(pageHead(id, "Page not found", "That address is not on this site.", id.Site+"/404.html", "./", "Skip to home"))
 	b.WriteString(siteHeader(id, false, false))
 	b.WriteString("<main id=\"main\" class=\"missing wrap\">\n<h1>Page not found.</h1>\n")
-	b.WriteString("<p>That address is not on this site. The six public products are on the home page.</p>\n")
+	b.WriteString("<p>That address is not on this site. The public products are on the home page.</p>\n")
 	b.WriteString("<p class=\"chips\">" + href("./", "chip") + "Return home</a></p>\n</main>\n")
 	b.WriteString(siteFooter(id))
 	b.WriteString("</body>\n</html>\n")
@@ -234,6 +234,8 @@ func accentFor(id string) string {
 		return "mint"
 	case "product.nicos-hidden-menubar":
 		return "violet"
+	case "product.nicos-slot-dock":
+		return "steel"
 	case "product.jobkit":
 		return "gold"
 	default:

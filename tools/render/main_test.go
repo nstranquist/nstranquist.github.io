@@ -14,6 +14,7 @@ var requiredIDs = []string{
 	"product.openbook",
 	"product.agent-ops",
 	"product.nicos-hidden-menubar",
+	"product.nicos-slot-dock",
 	"product.jobkit",
 }
 
@@ -81,11 +82,20 @@ func TestIndexIsASiteNotAGreeting(t *testing.T) {
 	if !strings.Contains(html, "session-pressure/releases/tag/v0.1.0") {
 		t.Fatal("Also public must cite the session-pressure v0.1.0 release")
 	}
+	if !strings.Contains(html, "keepawake/releases/tag/v0.1.3") {
+		t.Fatal("Also public must cite the keepawake v0.1.3 release")
+	}
+	if !strings.Contains(html, "nicos-slot-dock/releases/tag/v0.3.6") {
+		t.Fatal("selected work must include Nicos Slot Dock v0.3.6")
+	}
 	if strings.Contains(html, "wip-commit") {
 		t.Fatal("wip-commit must not appear on the public site")
 	}
 	if strings.Contains(html, "nicos-window-switcher") || strings.Contains(html, "nstranquist/ngtm") || strings.Contains(html, "snapref") {
 		t.Fatal("unreleased extracts must not appear as public catalog rows")
+	}
+	if strings.Contains(html, "hearthlight") {
+		t.Fatal("hearthlight is not on this public catalog")
 	}
 	if !strings.Contains(html, "synthetic-fixture") {
 		t.Fatal("jobkit boundary missing")

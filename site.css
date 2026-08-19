@@ -522,6 +522,7 @@ h1 {
 .work-card[data-accent="mint"] { --accent: #7dd3c0; }
 .work-card[data-accent="violet"] { --accent: #a889d8; }
 .work-card[data-accent="gold"] { --accent: #e0b45c; }
+.work-card[data-accent="steel"] { --accent: #8aa4c8; }
 
 .work-num {
   margin: 0;
