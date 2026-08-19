@@ -131,16 +131,6 @@ featured:
       Reads CPU, memory, thermal, and disk-write pressure, then admits or
       defers agent work. Public source. No downloadable binary.
 also_public:
-  - id: product.keepawake
-    name: keepawake
-    repo: nstranquist/keepawake
-    url: https://github.com/nstranquist/keepawake
-    proof_url: https://github.com/nstranquist/keepawake/releases/tag/v0.1.3
-    license: MIT
-    language: Go
-    lane: macOS utility
-    proof: v0.1.3
-    summary: Keep a closed-lid Mac awake on purpose.
   - id: product.wip-commit
     name: wip-commit
     repo: nstranquist/wip-commit
@@ -151,6 +141,16 @@ also_public:
     lane: Git safety
     proof: no public tag
     summary: Split commits for parallel agents in a shared Git checkout.
+  - id: product.keepawake
+    name: keepawake
+    repo: nstranquist/keepawake
+    url: https://github.com/nstranquist/keepawake
+    proof_url: https://github.com/nstranquist/keepawake/releases/tag/v0.1.3
+    license: MIT
+    language: Go
+    lane: macOS utility
+    proof: v0.1.3
+    summary: Keep a closed-lid Mac awake on purpose.
   - id: product.snapref
     name: SnapRef
     repo: nstranquist/snapref
