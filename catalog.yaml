@@ -21,17 +21,19 @@ featured:
     name: docs-puller
     repo: nstranquist/docs-puller
     url: https://github.com/nstranquist/docs-puller
-    proof_url: https://github.com/nstranquist/docs-puller/releases/tag/v0.5.0
+    proof_url: https://github.com/nstranquist/docs-puller/releases/tag/v0.7.6
     license: Apache-2.0
     language: Go
     lane: docs search
-    proof: v0.5.0
+    proof: v0.7.6
+    demo_url: https://docs-puller-demo.darthbitcoin.workers.dev
+    demo_label: Live demo
     summary: Search vendor and project docs on your machine.
     detail: >-
       Copies vendor and project docs into Markdown, indexes them with SQLite FTS5,
       and searches them locally. Quality is measured: the public BM25 sample
       reaches 95.8% Hit@1 and 100% Hit@5, and anyone can rerun it against
-      pinned pages.
+      pinned pages. A public demo searches the same reviewed sample corpus.
     metric:
       label: public BM25 sample
       value: 95.8% Hit@1 · 100% Hit@5

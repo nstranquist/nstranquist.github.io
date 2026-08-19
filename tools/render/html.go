@@ -71,7 +71,15 @@ func renderIndex(cat Catalog) string {
 			fmt.Fprintf(&b, "<span class=\"metric\">%s: %s</span>", xml(p.Metric.Label), xml(p.Metric.Value))
 		}
 		b.WriteString("</p>\n<p class=\"work-actions\">")
-		fmt.Fprintf(&b, "%sSource</a>%sRelease %s</a></p>\n</article>\n", href(p.URL, ""), href(p.ProofURL, ""), xml(p.Proof))
+		fmt.Fprintf(&b, "%sSource</a>%sRelease %s</a>", href(p.URL, ""), href(p.ProofURL, ""), xml(p.Proof))
+		if p.DemoURL != "" {
+			label := p.DemoLabel
+			if label == "" {
+				label = "Live demo"
+			}
+			fmt.Fprintf(&b, "%s%s</a>", href(p.DemoURL, ""), xml(label))
+		}
+		b.WriteString("</p>\n</article>\n")
 	}
 	b.WriteString("</div>\n</section>\n")
 

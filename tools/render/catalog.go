@@ -43,10 +43,12 @@ type Product struct {
 	License  string `yaml:"license"`
 	Language string `yaml:"language"`
 	Lane     string `yaml:"lane"`
-	Proof    string `yaml:"proof"`
-	Summary  string `yaml:"summary"`
-	Detail   string `yaml:"detail"`
-	Metric   Metric `yaml:"metric"`
+	Proof     string `yaml:"proof"`
+	DemoURL   string `yaml:"demo_url"`
+	DemoLabel string `yaml:"demo_label"`
+	Summary   string `yaml:"summary"`
+	Detail    string `yaml:"detail"`
+	Metric    Metric `yaml:"metric"`
 }
 
 type Metric struct {
@@ -103,6 +105,9 @@ func (c Catalog) validate() error {
 		}
 		if !strings.HasPrefix(p.ProofURL, p.URL+"/releases/tag/") {
 			return fmt.Errorf("featured[%d].proof_url must be a release tag on %s", i, p.URL)
+		}
+		if p.DemoURL != "" && !strings.HasPrefix(p.DemoURL, "https://") {
+			return fmt.Errorf("featured[%d].demo_url must be an https URL", i)
 		}
 		if _, ok := seen[p.ID]; ok {
 			return fmt.Errorf("duplicate featured id %s", p.ID)
