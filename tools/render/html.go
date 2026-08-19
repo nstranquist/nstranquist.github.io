@@ -238,6 +238,10 @@ func accentFor(id string) string {
 		return "steel"
 	case "product.jobkit":
 		return "gold"
+	case "product.session-pressure":
+		return "mint"
+	case "product.keepawake":
+		return "ember"
 	default:
 		return "cobalt"
 	}

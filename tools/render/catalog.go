@@ -94,9 +94,9 @@ func (c Catalog) validate() error {
 		return fmt.Errorf("glossary is required")
 	}
 	seen := map[string]struct{}{}
-	validate := func(label string, products []Product) error {
+	validate := func(label string, products []Product, requireRelease bool) error {
 		for i, p := range products {
-			if p.ID == "" || p.Name == "" || p.URL == "" || p.ProofURL == "" {
+			if p.ID == "" || p.Name == "" || p.URL == "" {
 				return fmt.Errorf("%s[%d] is missing required fields", label, i)
 			}
 			if !strings.HasPrefix(p.ID, "product.") {
@@ -105,8 +105,17 @@ func (c Catalog) validate() error {
 			if !strings.HasPrefix(p.URL, "https://github.com/nstranquist/") {
 				return fmt.Errorf("%s[%d].url is not a public nstranquist GitHub URL", label, i)
 			}
-			if !strings.HasPrefix(p.ProofURL, p.URL+"/releases/tag/") {
-				return fmt.Errorf("%s[%d].proof_url must be a release tag on %s", label, i, p.URL)
+			if p.ProofURL == "" {
+				return fmt.Errorf("%s[%d].proof_url is required", label, i)
+			}
+			okProof := strings.HasPrefix(p.ProofURL, p.URL+"/releases/tag/") ||
+				strings.HasPrefix(p.ProofURL, p.URL+"/tree/") ||
+				p.ProofURL == p.URL
+			if requireRelease {
+				okProof = strings.HasPrefix(p.ProofURL, p.URL+"/releases/tag/")
+			}
+			if !okProof {
+				return fmt.Errorf("%s[%d].proof_url must stay on %s", label, i, p.URL)
 			}
 			if p.DemoURL != "" && !strings.HasPrefix(p.DemoURL, "https://") {
 				return fmt.Errorf("%s[%d].demo_url must be an https URL", label, i)
@@ -118,8 +127,8 @@ func (c Catalog) validate() error {
 		}
 		return nil
 	}
-	if err := validate("featured", c.Featured); err != nil {
+	if err := validate("featured", c.Featured, true); err != nil {
 		return err
 	}
-	return validate("also_public", c.AlsoPublic)
+	return validate("also_public", c.AlsoPublic, false)
 }

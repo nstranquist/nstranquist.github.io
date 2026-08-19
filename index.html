@@ -40,12 +40,12 @@
 <h1>Nico Stranquist</h1>
 <p class="lede">Senior software engineer, St. Louis.</p>
 <p class="thesis">I build developer platforms, local developer tools, and full-stack products.</p>
-<p class="thesis">These are the public products I will stand behind. Each product has a license and a tagged release you can inspect. Private work and unfinished projects stay off this page.</p>
+<p class="thesis">These are public products I will stand behind. Selected work has a tagged GitHub Release you can inspect. A second list names other public source. Missing tags stay visible.</p>
 <div class="chips"><span class="chip">Platforms</span><span class="chip">Local tools</span><span class="chip">Full-stack</span></div>
 <p class="hero-actions"><a href="#work" class="text-link">Read the work</a></p>
 </section>
 <section class="section wrap" id="catalog">
-<div class="section-head"><h2>Catalog</h2><p class="meta">7 products · tagged releases</p></div>
+<div class="section-head"><h2>Catalog</h2><p class="meta">9 products · tagged releases</p></div>
 <div class="catalog-board"><table>
 <caption>Public catalog of products. Product names jump to the write-up on this page. Release tags open the public GitHub release.</caption>
 <thead><tr><th></th><th>Product</th><th>Kind</th><th>Stack</th><th>License</th><th>Release</th></tr></thead>
@@ -57,6 +57,8 @@
 <tr><td data-label="#" class="idx">05</td><td data-label="Product"><a href="#work-nicos-hidden-menubar"><span class="product-name">Nicos Hidden Bar</span><span class="product-id">nstranquist/nicos-hidden-menubar</span></a></td><td data-label="Kind" class="lane">macOS app</td><td data-label="Stack" class="stack">Swift</td><td data-label="License"><span class="license">GPL-3.0</span></td><td data-label="Release"><a href="https://github.com/nstranquist/nicos-hidden-menubar/releases/tag/v0.2.0" class="proof" target="_blank" rel="noopener noreferrer">v0.2.0</a></td></tr>
 <tr><td data-label="#" class="idx">06</td><td data-label="Product"><a href="#work-nicos-slot-dock"><span class="product-name">Nicos Slot Dock</span><span class="product-id">nstranquist/nicos-slot-dock</span></a></td><td data-label="Kind" class="lane">macOS app</td><td data-label="Stack" class="stack">Swift</td><td data-label="License"><span class="license">MIT</span></td><td data-label="Release"><a href="https://github.com/nstranquist/nicos-slot-dock/releases/tag/v0.3.6" class="proof" target="_blank" rel="noopener noreferrer">v0.3.6</a></td></tr>
 <tr><td data-label="#" class="idx">07</td><td data-label="Product"><a href="#work-jobkit"><span class="product-name">JobKit</span><span class="product-id">nstranquist/jobkit</span></a></td><td data-label="Kind" class="lane">job search</td><td data-label="Stack" class="stack">Go</td><td data-label="License"><span class="license">MIT</span></td><td data-label="Release"><a href="https://github.com/nstranquist/jobkit/releases/tag/v0.9.0" class="proof" target="_blank" rel="noopener noreferrer">v0.9.0</a></td></tr>
+<tr><td data-label="#" class="idx">08</td><td data-label="Product"><a href="#work-session-pressure"><span class="product-name">SessionPressure</span><span class="product-id">nstranquist/session-pressure</span></a></td><td data-label="Kind" class="lane">host admission</td><td data-label="Stack" class="stack">Go</td><td data-label="License"><span class="license">Apache-2.0</span></td><td data-label="Release"><a href="https://github.com/nstranquist/session-pressure/releases/tag/v0.1.0" class="proof" target="_blank" rel="noopener noreferrer">v0.1.0</a></td></tr>
+<tr><td data-label="#" class="idx">09</td><td data-label="Product"><a href="#work-keepawake"><span class="product-name">keepawake</span><span class="product-id">nstranquist/keepawake</span></a></td><td data-label="Kind" class="lane">macOS utility</td><td data-label="Stack" class="stack">Go</td><td data-label="License"><span class="license">MIT</span></td><td data-label="Release"><a href="https://github.com/nstranquist/keepawake/releases/tag/v0.1.3" class="proof" target="_blank" rel="noopener noreferrer">v0.1.3</a></td></tr>
 </tbody></table>
 <p class="catalog-note">Public products only. Unproven claims are rejected. No invented numbers.</p></div>
 </section>
@@ -119,13 +121,32 @@
 <p class="work-meta"><span>Go</span><span>MIT</span></p>
 <p class="work-actions"><a href="https://github.com/nstranquist/jobkit" target="_blank" rel="noopener noreferrer">Source</a><a href="https://github.com/nstranquist/jobkit/releases/tag/v0.9.0" target="_blank" rel="noopener noreferrer">Release v0.9.0</a></p>
 </article>
+<article class="work-card" id="work-session-pressure" data-accent="mint">
+<div class="work-card-top"><p class="work-num">08</p><span class="meta">host admission</span></div>
+<h3><a href="https://github.com/nstranquist/session-pressure" target="_blank" rel="noopener noreferrer">SessionPressure</a></h3>
+<p class="work-summary">Local host admission for concurrent coding agents on one Mac.</p>
+<p>Samples CPU, memory, thermal, and disk-write pressure. Admits or defers concurrent agent work on one Mac. Public Apache-2.0 source. No downloadable binary.</p>
+<p class="work-meta"><span>Go</span><span>Apache-2.0</span></p>
+<p class="work-actions"><a href="https://github.com/nstranquist/session-pressure" target="_blank" rel="noopener noreferrer">Source</a><a href="https://github.com/nstranquist/session-pressure/releases/tag/v0.1.0" target="_blank" rel="noopener noreferrer">Release v0.1.0</a></p>
+</article>
+<article class="work-card" id="work-keepawake" data-accent="ember">
+<div class="work-card-top"><p class="work-num">09</p><span class="meta">macOS utility</span></div>
+<h3><a href="https://github.com/nstranquist/keepawake" target="_blank" rel="noopener noreferrer">keepawake</a></h3>
+<p class="work-summary">Keep a closed-lid Mac awake on purpose.</p>
+<p>Combines pmset disablesleep with a managed caffeinate process so a Mac can keep running with the lid closed. Public MIT source.</p>
+<p class="work-meta"><span>Go</span><span>MIT</span></p>
+<p class="work-actions"><a href="https://github.com/nstranquist/keepawake" target="_blank" rel="noopener noreferrer">Source</a><a href="https://github.com/nstranquist/keepawake/releases/tag/v0.1.3" target="_blank" rel="noopener noreferrer">Release v0.1.3</a></p>
+</article>
 </div>
 </section>
 <section class="section wrap" id="also-public">
 <div class="section-head"><h2>Also public</h2><p class="meta">Released, not selected work</p></div>
 <ul class="also-public">
-<li><strong><a href="https://github.com/nstranquist/session-pressure" target="_blank" rel="noopener noreferrer">SessionPressure</a></strong> — Local host admission for concurrent coding agents on one Mac. <span class="also-meta">Go · Apache-2.0 · <a href="https://github.com/nstranquist/session-pressure/releases/tag/v0.1.0" class="proof" target="_blank" rel="noopener noreferrer">v0.1.0</a></span></li>
-<li><strong><a href="https://github.com/nstranquist/keepawake" target="_blank" rel="noopener noreferrer">keepawake</a></strong> — Keep a closed-lid Mac awake on purpose. <span class="also-meta">Go · MIT · <a href="https://github.com/nstranquist/keepawake/releases/tag/v0.1.3" class="proof" target="_blank" rel="noopener noreferrer">v0.1.3</a></span></li>
+<li><strong><a href="https://github.com/nstranquist/wip-commit" target="_blank" rel="noopener noreferrer">wip-commit</a></strong> — Guarded split-commit capture for parallel agents. <span class="also-meta">Go · MIT · <a href="https://github.com/nstranquist/wip-commit" class="proof" target="_blank" rel="noopener noreferrer">no public tag</a></span></li>
+<li><strong><a href="https://github.com/nstranquist/snapref" target="_blank" rel="noopener noreferrer">SnapRef</a></strong> — Local-first browser automation for agents. <span class="also-meta">Go · Apache-2.0 · <a href="https://github.com/nstranquist/snapref/tree/v0.2.0-rc.1" class="proof" target="_blank" rel="noopener noreferrer">v0.2.0-rc.1</a></span></li>
+<li><strong><a href="https://github.com/nstranquist/ngtm" target="_blank" rel="noopener noreferrer">Nicos GTM</a></strong> — Local go-to-market toolkit with grounded claims. <span class="also-meta">Go · MIT · <a href="https://github.com/nstranquist/ngtm" class="proof" target="_blank" rel="noopener noreferrer">no public tag</a></span></li>
+<li><strong><a href="https://github.com/nstranquist/nicos-flag-eval" target="_blank" rel="noopener noreferrer">nicos-flag-eval</a></strong> — Portable feature-flag evaluator. Synthetic catalog only. <span class="also-meta">Go · MIT · <a href="https://github.com/nstranquist/nicos-flag-eval" class="proof" target="_blank" rel="noopener noreferrer">no public tag</a></span></li>
+<li><strong><a href="https://github.com/nstranquist/nicos-window-switcher" target="_blank" rel="noopener noreferrer">Nicos Window Switcher</a></strong> — Clean-room macOS window switcher. Public APIs only. <span class="also-meta">Swift · MIT · <a href="https://github.com/nstranquist/nicos-window-switcher" class="proof" target="_blank" rel="noopener noreferrer">no public tag</a></span></li>
 </ul>
 </section>
 <section class="section wrap approach" id="approach">

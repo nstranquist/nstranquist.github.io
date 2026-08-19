@@ -1,7 +1,7 @@
 # Public catalog for https://nstranquist.github.io/
-# Featured rows match selected work on the GitHub profile that have a GitHub Release.
-# Keep this set aligned with ~/dev/nstranquist/catalog.yaml. Unreleased public
-# extracts stay off this page. Other tagged releases go under also_public.
+# Featured rows are selected work with a GitHub Release.
+# also_public holds other public source, including extracts without a tag.
+# Keep the story aligned with ~/dev/nstranquist/catalog.yaml.
 schema_version: 1
 identity:
   name: Nico Stranquist
@@ -11,9 +11,9 @@ identity:
   intro: |
     I build developer platforms, local developer tools, and full-stack products.
 
-    These are the public products I will stand behind. Each product has a license
-    and a tagged release you can inspect. Private work and unfinished projects
-    stay off this page.
+    These are public products I will stand behind. Selected work has a tagged
+    GitHub Release you can inspect. A second list names other public source.
+    Missing tags stay visible.
   github: https://github.com/nstranquist
   linkedin: https://linkedin.com/in/nstranquist
   site: https://nstranquist.github.io
@@ -126,7 +126,6 @@ featured:
       Profiles, eligibility rules, claim lists that reject unproven numbers,
       and apply packages a person reviews before sending. The public tree is
       synthetic-fixture only (example data, not a real resume or job history).
-also_public:
   - id: product.session-pressure
     name: SessionPressure
     repo: nstranquist/session-pressure
@@ -137,6 +136,10 @@ also_public:
     lane: host admission
     proof: v0.1.0
     summary: Local host admission for concurrent coding agents on one Mac.
+    detail: >-
+      Samples CPU, memory, thermal, and disk-write pressure. Admits or defers
+      concurrent agent work on one Mac. Public Apache-2.0 source. No
+      downloadable binary.
   - id: product.keepawake
     name: keepawake
     repo: nstranquist/keepawake
@@ -147,6 +150,60 @@ also_public:
     lane: macOS utility
     proof: v0.1.3
     summary: Keep a closed-lid Mac awake on purpose.
+    detail: >-
+      Combines pmset disablesleep with a managed caffeinate process so a Mac
+      can keep running with the lid closed. Public MIT source.
+also_public:
+  - id: product.wip-commit
+    name: wip-commit
+    repo: nstranquist/wip-commit
+    url: https://github.com/nstranquist/wip-commit
+    proof_url: https://github.com/nstranquist/wip-commit
+    license: MIT
+    language: Go
+    lane: Git safety
+    proof: no public tag
+    summary: Guarded split-commit capture for parallel agents.
+  - id: product.snapref
+    name: SnapRef
+    repo: nstranquist/snapref
+    url: https://github.com/nstranquist/snapref
+    proof_url: https://github.com/nstranquist/snapref/tree/v0.2.0-rc.1
+    license: Apache-2.0
+    language: Go
+    lane: browser automation
+    proof: v0.2.0-rc.1
+    summary: Local-first browser automation for agents.
+  - id: product.ngtm
+    name: Nicos GTM
+    repo: nstranquist/ngtm
+    url: https://github.com/nstranquist/ngtm
+    proof_url: https://github.com/nstranquist/ngtm
+    license: MIT
+    language: Go
+    lane: go-to-market
+    proof: no public tag
+    summary: Local go-to-market toolkit with grounded claims.
+  - id: product.nicos-flag-eval
+    name: nicos-flag-eval
+    repo: nstranquist/nicos-flag-eval
+    url: https://github.com/nstranquist/nicos-flag-eval
+    proof_url: https://github.com/nstranquist/nicos-flag-eval
+    license: MIT
+    language: Go
+    lane: feature flags
+    proof: no public tag
+    summary: Portable feature-flag evaluator. Synthetic catalog only.
+  - id: product.nicos-window-switcher
+    name: Nicos Window Switcher
+    repo: nstranquist/nicos-window-switcher
+    url: https://github.com/nstranquist/nicos-window-switcher
+    proof_url: https://github.com/nstranquist/nicos-window-switcher
+    license: MIT
+    language: Swift
+    lane: macOS app
+    proof: no public tag
+    summary: Clean-room macOS window switcher. Public APIs only.
 toolbox:
   - Go
   - TypeScript
