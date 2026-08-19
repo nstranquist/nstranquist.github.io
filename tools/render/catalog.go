@@ -12,6 +12,7 @@ type Catalog struct {
 	SchemaVersion int             `yaml:"schema_version"`
 	Identity      Identity        `yaml:"identity"`
 	Featured      []Product       `yaml:"featured"`
+	AlsoPublic    []Product       `yaml:"also_public"`
 	Toolbox       []string        `yaml:"toolbox"`
 	Principles    []Principle     `yaml:"principles"`
 	Footnote      string          `yaml:"footnote"`
@@ -93,26 +94,32 @@ func (c Catalog) validate() error {
 		return fmt.Errorf("glossary is required")
 	}
 	seen := map[string]struct{}{}
-	for i, p := range c.Featured {
-		if p.ID == "" || p.Name == "" || p.URL == "" || p.ProofURL == "" {
-			return fmt.Errorf("featured[%d] is missing required fields", i)
+	validate := func(label string, products []Product) error {
+		for i, p := range products {
+			if p.ID == "" || p.Name == "" || p.URL == "" || p.ProofURL == "" {
+				return fmt.Errorf("%s[%d] is missing required fields", label, i)
+			}
+			if !strings.HasPrefix(p.ID, "product.") {
+				return fmt.Errorf("%s[%d].id %q must start with product.", label, i, p.ID)
+			}
+			if !strings.HasPrefix(p.URL, "https://github.com/nstranquist/") {
+				return fmt.Errorf("%s[%d].url is not a public nstranquist GitHub URL", label, i)
+			}
+			if !strings.HasPrefix(p.ProofURL, p.URL+"/releases/tag/") {
+				return fmt.Errorf("%s[%d].proof_url must be a release tag on %s", label, i, p.URL)
+			}
+			if p.DemoURL != "" && !strings.HasPrefix(p.DemoURL, "https://") {
+				return fmt.Errorf("%s[%d].demo_url must be an https URL", label, i)
+			}
+			if _, ok := seen[p.ID]; ok {
+				return fmt.Errorf("duplicate product id %s", p.ID)
+			}
+			seen[p.ID] = struct{}{}
 		}
-		if !strings.HasPrefix(p.ID, "product.") {
-			return fmt.Errorf("featured[%d].id %q must start with product.", i, p.ID)
-		}
-		if !strings.HasPrefix(p.URL, "https://github.com/nstranquist/") {
-			return fmt.Errorf("featured[%d].url is not a public nstranquist GitHub URL", i)
-		}
-		if !strings.HasPrefix(p.ProofURL, p.URL+"/releases/tag/") {
-			return fmt.Errorf("featured[%d].proof_url must be a release tag on %s", i, p.URL)
-		}
-		if p.DemoURL != "" && !strings.HasPrefix(p.DemoURL, "https://") {
-			return fmt.Errorf("featured[%d].demo_url must be an https URL", i)
-		}
-		if _, ok := seen[p.ID]; ok {
-			return fmt.Errorf("duplicate featured id %s", p.ID)
-		}
-		seen[p.ID] = struct{}{}
+		return nil
 	}
-	return nil
+	if err := validate("featured", c.Featured); err != nil {
+		return err
+	}
+	return validate("also_public", c.AlsoPublic)
 }

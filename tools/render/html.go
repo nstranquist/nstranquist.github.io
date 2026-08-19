@@ -23,7 +23,7 @@ func renderIndex(cat Catalog) string {
 	id := cat.Identity
 	var b strings.Builder
 	b.WriteString(pageHead(id, id.Name+" — public catalog", collapseWS(id.Thesis), id.Site+"/", "#work", "Skip to work"))
-	b.WriteString(siteHeader(id, true))
+	b.WriteString(siteHeader(id, true, len(cat.AlsoPublic) > 0))
 	b.WriteString("<main id=\"main\">\n")
 	b.WriteString("<section class=\"hero wrap\">\n")
 	b.WriteString("<p class=\"kicker\"><span class=\"kicker-dot\" aria-hidden=\"true\"></span>Public catalog · tagged releases</p>\n")
@@ -83,6 +83,18 @@ func renderIndex(cat Catalog) string {
 	}
 	b.WriteString("</div>\n</section>\n")
 
+	if len(cat.AlsoPublic) > 0 {
+		b.WriteString("<section class=\"section wrap\" id=\"also-public\">\n")
+		b.WriteString("<div class=\"section-head\"><h2>Also public</h2><p class=\"meta\">Released, not selected work</p></div>\n")
+		b.WriteString("<ul class=\"also-public\">\n")
+		for _, p := range cat.AlsoPublic {
+			fmt.Fprintf(&b, "<li><strong>%s%s</a></strong> — %s <span class=\"also-meta\">%s · %s · %s%s</a></span></li>\n",
+				href(p.URL, ""), xml(p.Name), xml(collapseWS(p.Summary)),
+				xml(p.Language), xml(p.License), href(p.ProofURL, "proof"), xml(p.Proof))
+		}
+		b.WriteString("</ul>\n</section>\n")
+	}
+
 	b.WriteString("<section class=\"section wrap approach\" id=\"approach\">\n<h2>How I work</h2>\n<div class=\"approach-grid\">\n")
 	for _, p := range cat.Principles {
 		fmt.Fprintf(&b, "<article class=\"principle\"><h3>%s</h3><p>%s</p></article>\n", xml(p.Title), xml(p.Body))
@@ -113,7 +125,7 @@ func render404(cat Catalog) string {
 	id := cat.Identity
 	var b strings.Builder
 	b.WriteString(pageHead(id, "Page not found", "That address is not on this site.", id.Site+"/404.html", "./", "Skip to home"))
-	b.WriteString(siteHeader(id, false))
+	b.WriteString(siteHeader(id, false, false))
 	b.WriteString("<main id=\"main\" class=\"missing wrap\">\n<h1>Page not found.</h1>\n")
 	b.WriteString("<p>That address is not on this site. The six public products are on the home page.</p>\n")
 	b.WriteString("<p class=\"chips\">" + href("./", "chip") + "Return home</a></p>\n</main>\n")
@@ -146,18 +158,20 @@ func pageHead(id Identity, title, description, canonical, skip, skipLabel string
 	return b.String()
 }
 
-func siteHeader(id Identity, onHome bool) string {
-	catalog, work, approach, glossary := "#catalog", "#work", "#approach", "#glossary"
+func siteHeader(id Identity, onHome bool, alsoPublic bool) string {
+	catalog, work, also, approach, glossary := "#catalog", "#work", "#also-public", "#approach", "#glossary"
 	if !onHome {
-		catalog, work, approach, glossary = "./#catalog", "./#work", "./#approach", "./#glossary"
+		catalog, work, also, approach, glossary = "./#catalog", "./#work", "./#also-public", "./#approach", "./#glossary"
 	}
 	var b strings.Builder
 	b.WriteString("<header class=\"site-header\">\n<div class=\"wrap\">\n")
 	b.WriteString(href("./", "brand") + markSVG() + "<span class=\"brand-name\">Public catalog</span></a>\n")
 	b.WriteString("<nav aria-label=\"Primary\">\n")
-	fmt.Fprintf(&b, "%s</a>\n%s</a>\n%s</a>\n%s</a>\n%sGitHub</a>\n",
-		navItem(catalog, "catalog", "Catalog"),
-		navItem(work, "work", "Work"),
+	fmt.Fprintf(&b, "%s</a>\n%s</a>\n", navItem(catalog, "catalog", "Catalog"), navItem(work, "work", "Work"))
+	if alsoPublic {
+		fmt.Fprintf(&b, "%s</a>\n", navItem(also, "also-public", "Also public"))
+	}
+	fmt.Fprintf(&b, "%s</a>\n%s</a>\n%sGitHub</a>\n",
 		navItem(approach, "approach", "Approach"),
 		navItem(glossary, "glossary", "Terms"),
 		href(id.GitHub, ""))

@@ -466,6 +466,45 @@ h1 {
   gap: 1rem;
 }
 
+.also-public {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.also-public li {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--line);
+  line-height: 1.5;
+}
+
+.also-public li:last-child {
+  border-bottom: 0;
+}
+
+.also-public a {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.also-public a:hover {
+  color: var(--signal-text);
+}
+
+.also-meta {
+  display: inline-block;
+  margin-left: 0.35rem;
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+}
+
+.also-meta a {
+  color: var(--signal-text);
+}
+
 .work-card {
   --accent: var(--signal);
   display: grid;

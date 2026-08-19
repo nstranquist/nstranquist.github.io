@@ -72,8 +72,20 @@ func TestIndexIsASiteNotAGreeting(t *testing.T) {
 	if !strings.Contains(html, "docs-puller/releases/tag/v0.7.6") {
 		t.Fatal("docs-puller release must match the live formal tag")
 	}
-	if !strings.Contains(html, "https://docs-puller-demo.darthbitcoin.workers.dev") {
+	if !strings.Contains(html, "https://docs-puller-demo.nstranquist.workers.dev") {
 		t.Fatal("docs-puller live demo must be linked")
+	}
+	if !strings.Contains(html, "id=\"also-public\"") || !strings.Contains(html, "session-pressure") {
+		t.Fatal("index must include Also public for session-pressure")
+	}
+	if !strings.Contains(html, "session-pressure/releases/tag/v0.1.0") {
+		t.Fatal("Also public must cite the session-pressure v0.1.0 release")
+	}
+	if strings.Contains(html, "wip-commit") {
+		t.Fatal("wip-commit must not appear on the public site")
+	}
+	if strings.Contains(html, "nicos-window-switcher") || strings.Contains(html, "nstranquist/ngtm") || strings.Contains(html, "snapref") {
+		t.Fatal("unreleased extracts must not appear as public catalog rows")
 	}
 	if !strings.Contains(html, "synthetic-fixture") {
 		t.Fatal("jobkit boundary missing")
@@ -145,7 +157,7 @@ func TestRenderedPagesLinkContract(t *testing.T) {
 	missing := render404(cat)
 	assertLinkContract(t, "index", home)
 	assertLinkContract(t, "404", missing)
-	for _, p := range cat.Featured {
+	for _, p := range append(append([]Product{}, cat.Featured...), cat.AlsoPublic...) {
 		if !strings.Contains(home, `href="`+p.URL+`" target="_blank" rel="noopener noreferrer"`) {
 			t.Errorf("index missing new-tab product link for %s", p.ID)
 		}

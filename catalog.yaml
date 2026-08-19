@@ -26,7 +26,7 @@ featured:
     language: Go
     lane: docs search
     proof: v0.7.6
-    demo_url: https://docs-puller-demo.darthbitcoin.workers.dev
+    demo_url: https://docs-puller-demo.nstranquist.workers.dev
     demo_label: Live demo
     summary: Search vendor and project docs on your machine.
     detail: >-
@@ -109,6 +109,17 @@ featured:
       Profiles, eligibility rules, claim lists that reject unproven numbers,
       and apply packages a person reviews before sending. The public tree is
       synthetic-fixture only (example data, not a real resume or job history).
+also_public:
+  - id: product.session-pressure
+    name: SessionPressure
+    repo: nstranquist/session-pressure
+    url: https://github.com/nstranquist/session-pressure
+    proof_url: https://github.com/nstranquist/session-pressure/releases/tag/v0.1.0
+    license: Apache-2.0
+    language: Go
+    lane: host admission
+    proof: v0.1.0
+    summary: Local host admission for concurrent coding agents on one Mac.
 toolbox:
   - Go
   - TypeScript
