@@ -386,7 +386,7 @@ h1 {
 }
 
 .catalog-head {
-  padding: 0.85rem 1.1rem;
+  padding: 0.7rem 1.1rem;
   border-bottom: 1px solid var(--line-strong);
   color: var(--faint);
   font-family: var(--mono);
@@ -397,6 +397,50 @@ h1 {
 
 .catalog-head [role="columnheader"]:last-child {
   grid-column: 7;
+}
+
+.catalog-head .sort {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.catalog-head .sort:hover {
+  color: var(--fg);
+}
+
+.catalog-head [aria-sort="ascending"] .sort,
+.catalog-head [aria-sort="descending"] .sort {
+  color: var(--fg);
+}
+
+.catalog-head [aria-sort="ascending"] .sort::after,
+.catalog-head [aria-sort="descending"] .sort::after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 0.32em;
+  border-left: 0.22em solid transparent;
+  border-right: 0.22em solid transparent;
+}
+
+.catalog-head [aria-sort="ascending"] .sort::after {
+  border-bottom: 0.28em solid currentColor;
+}
+
+.catalog-head [aria-sort="descending"] .sort::after {
+  border-top: 0.28em solid currentColor;
 }
 
 .catalog-item {
@@ -445,7 +489,7 @@ h1 {
   -webkit-appearance: none;
   width: auto;
   margin: 0;
-  padding: 1rem 0;
+  padding: 0.76rem 0;
   border: 0;
   background: transparent;
   color: inherit;
@@ -551,7 +595,8 @@ h1 {
 .catalog-detail {
   grid-column: 1 / -1;
   grid-row: 2;
-  padding: 1.1rem 0 1.25rem;
+  padding: 0.9rem 0 1.05rem;
+  padding-left: calc(2.4rem + 0.65rem);
 }
 
 .catalog-item:not(.is-open) .catalog-detail:not([hidden]) {
@@ -583,6 +628,10 @@ h1 {
 
 .catalog-detail p:last-child {
   margin-bottom: 0;
+}
+
+.section.approach {
+  padding-bottom: clamp(2.1rem, 5vw, 3.35rem);
 }
 
 .ship-stack {
@@ -853,6 +902,7 @@ h1 {
   .catalog-detail {
     grid-column: 1 / -1;
     grid-row: 2;
+    padding-left: 0;
   }
 }
 

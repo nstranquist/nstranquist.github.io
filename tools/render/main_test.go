@@ -304,6 +304,38 @@ func TestHowIShip(t *testing.T) {
 	if !strings.Contains(html, `class="ship-line"`) {
 		t.Fatal("How I ship must render compact ship-line rows")
 	}
+	if !strings.Contains(html, "<h3>Local</h3>") || !strings.Contains(html, "<h3>Public</h3>") {
+		t.Fatal("How I ship must keep Local and Public lines")
+	}
+}
+
+func TestCatalogSortMarkup(t *testing.T) {
+	html := renderIndex(loadTestCatalog(t))
+	for _, needle := range []string{
+		`type="button" class="sort"`,
+		`data-sort="name"`,
+		`data-sort="lane"`,
+		`data-sort="stack"`,
+		`data-sort="license"`,
+		`data-sort="proof"`,
+		`data-name=`,
+		`data-lane=`,
+		`data-stack=`,
+		`data-license=`,
+		`data-proof=`,
+		`data-index="0"`,
+	} {
+		if !strings.Contains(html, needle) {
+			t.Errorf("catalog sort markup missing %s", needle)
+		}
+	}
+	if !strings.Contains(html, `data-sort="index"`) {
+		t.Fatal("idx header should sort by original index")
+	}
+	first := loadTestCatalog(t).Featured[0]
+	if !strings.Contains(html, `data-name="`+first.Name+`"`) || !strings.Contains(html, `data-proof="`+first.Proof+`"`) {
+		t.Fatal("first catalog item must carry renderer sort data")
+	}
 }
 
 func TestStickyNavContractInStylesheet(t *testing.T) {

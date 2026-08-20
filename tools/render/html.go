@@ -42,19 +42,19 @@ func renderIndex(cat Catalog) string {
 	b.WriteString("<div class=\"catalog-table\" role=\"table\">\n")
 	b.WriteString("<p class=\"catalog-caption\">Open a name for the write-up. Versions open GitHub.</p>\n")
 	b.WriteString("<div class=\"catalog-head\" role=\"row\">")
-	b.WriteString("<div role=\"columnheader\" class=\"idx\"></div>")
-	b.WriteString("<div role=\"columnheader\">Product</div>")
-	b.WriteString("<div role=\"columnheader\">Kind</div>")
-	b.WriteString("<div role=\"columnheader\">Stack</div>")
-	b.WriteString("<div role=\"columnheader\">License</div>")
-	b.WriteString("<div role=\"columnheader\">Release</div>")
+	b.WriteString("<div role=\"columnheader\" class=\"idx\" aria-sort=\"none\"><button type=\"button\" class=\"sort\" data-sort=\"index\">#</button></div>")
+	b.WriteString("<div role=\"columnheader\" aria-sort=\"none\"><button type=\"button\" class=\"sort\" data-sort=\"name\">Product</button></div>")
+	b.WriteString("<div role=\"columnheader\" aria-sort=\"none\"><button type=\"button\" class=\"sort\" data-sort=\"lane\">Kind</button></div>")
+	b.WriteString("<div role=\"columnheader\" aria-sort=\"none\"><button type=\"button\" class=\"sort\" data-sort=\"stack\">Stack</button></div>")
+	b.WriteString("<div role=\"columnheader\" aria-sort=\"none\"><button type=\"button\" class=\"sort\" data-sort=\"license\">License</button></div>")
+	b.WriteString("<div role=\"columnheader\" aria-sort=\"none\"><button type=\"button\" class=\"sort\" data-sort=\"proof\">Release</button></div>")
 	b.WriteString("</div>\n")
 	for i, p := range cat.Featured {
 		slug := strings.TrimPrefix(p.ID, "product.")
 		wid := workID(p)
 		detailID := "detail-" + slug
 		toggleID := "toggle-" + slug
-		fmt.Fprintf(&b, "<div class=\"catalog-item\" id=\"%s\" data-accent=\"%s\" role=\"row\">", xml(wid), xml(accentFor(p.ID)))
+		fmt.Fprintf(&b, "<div class=\"catalog-item\" id=\"%s\" data-accent=\"%s\" data-name=\"%s\" data-lane=\"%s\" data-stack=\"%s\" data-license=\"%s\" data-proof=\"%s\" data-index=\"%d\" role=\"row\">", xml(wid), xml(accentFor(p.ID)), xml(p.Name), xml(p.Lane), xml(p.Language), xml(p.License), xml(p.Proof), i)
 		fmt.Fprintf(&b, "<button type=\"button\" class=\"catalog-toggle\" aria-expanded=\"false\" aria-controls=\"%s\" id=\"%s\">", xml(detailID), xml(toggleID))
 		fmt.Fprintf(&b, "<span class=\"idx\">%02d</span>", i+1)
 		fmt.Fprintf(&b, "<span class=\"product\"><span class=\"product-name\">%s</span><span class=\"product-id\">%s</span></span>", xml(p.Name), xml(p.Repo))
@@ -108,7 +108,7 @@ func renderIndex(cat Catalog) string {
 		b.WriteString("</ul>\n</section>\n")
 	}
 
-	b.WriteString("<section class=\"section wrap approach\" id=\"approach\">\n<h2>How I ship</h2>\n<div class=\"ship-stack\">\n")
+	b.WriteString("<section class=\"section wrap approach\" id=\"approach\">\n<div class=\"section-head\"><h2>How I ship</h2></div>\n<div class=\"ship-stack\">\n")
 	for _, p := range cat.Principles {
 		fmt.Fprintf(&b, "<div class=\"ship-line\"><h3>%s</h3><p>%s</p></div>\n", xml(p.Title), xml(p.Body))
 	}
