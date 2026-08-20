@@ -159,7 +159,7 @@ func TestHrefSplitsOutboundAndSameSite(t *testing.T) {
 	if !strings.Contains(out, `class="proof"`) {
 		t.Fatalf("class not forwarded: %s", out)
 	}
-	same := href("#work", "")
+	same := href("#catalog", "")
 	if strings.Contains(same, `target="_blank"`) {
 		t.Fatalf("in-page hash must stay same-tab: %s", same)
 	}
@@ -187,8 +187,11 @@ func TestRenderedPagesLinkContract(t *testing.T) {
 	if strings.Contains(missing, `href="#catalog"`) || strings.Contains(missing, `href="#work"`) || strings.Contains(missing, `href="#approach"`) || strings.Contains(missing, `href="#glossary"`) {
 		t.Fatal("404 must not use bare hash nav to missing sections")
 	}
-	if !strings.Contains(missing, `href="./#catalog"`) || !strings.Contains(missing, `href="./#work"`) || !strings.Contains(missing, `href="./#approach"`) {
-		t.Fatal("404 in-site nav should send visitors home to those sections")
+	if !strings.Contains(missing, `href="./#catalog"`) || !strings.Contains(missing, `href="./#approach"`) {
+		t.Fatal("404 in-site nav should send visitors home to catalog and approach")
+	}
+	if strings.Contains(missing, `href="./#work"`) || strings.Contains(missing, `href="#work"`) {
+		t.Fatal("404 must not use #work as a nav target")
 	}
 	if strings.Contains(missing, `href="./#glossary"`) || strings.Contains(missing, `href="#glossary"`) {
 		t.Fatal("404 must not link to #glossary")
@@ -212,16 +215,62 @@ func TestRenderedPagesLinkContract(t *testing.T) {
 	first := cat.Featured[0]
 	anchor := "#work-" + strings.TrimPrefix(first.ID, "product.")
 	if !strings.Contains(home, `id="`+strings.TrimPrefix(anchor, "#")+`"`) {
-		t.Fatal("work cards must have stable in-page ids")
-	}
-	if !strings.Contains(home, `href="`+anchor+`"`) {
-		t.Fatal("catalog names must jump to the on-page write-up")
+		t.Fatal("catalog items must have stable in-page ids")
 	}
 	if strings.Contains(home, `href="`+anchor+`" target="_blank"`) {
-		t.Fatal("in-page work jumps must stay same-tab")
+		t.Fatal("in-page work hashes must stay same-tab")
 	}
 	if !strings.Contains(home, `data-accent="teal"`) {
-		t.Fatal("work cards must carry product accents")
+		t.Fatal("catalog items must carry product accents")
+	}
+	if !strings.Contains(home, `href="#catalog"`) {
+		t.Fatal("skip and See the work must go to #catalog")
+	}
+	if strings.Contains(home, `href="#work"`) {
+		t.Fatal("home must not use #work as a section target")
+	}
+	if strings.Contains(home, `id="work"`) || strings.Contains(home, "Selected work") {
+		t.Fatal("index must not render a standalone Selected work section")
+	}
+}
+
+func TestCatalogRowsExpandInPlace(t *testing.T) {
+	cat := loadTestCatalog(t)
+	html := renderIndex(cat)
+	if !strings.Contains(html, `aria-expanded="false"`) || !strings.Contains(html, `aria-controls="detail-docs-puller"`) {
+		t.Fatal("catalog toggles must expose aria-expanded and aria-controls")
+	}
+	if !strings.Contains(html, `id="toggle-docs-puller"`) || !strings.Contains(html, `id="detail-docs-puller"`) {
+		t.Fatal("docs-puller toggle and detail region ids missing")
+	}
+	first := cat.Featured[0]
+	if first.Summary == "" || !strings.Contains(html, first.Summary) {
+		t.Fatal("featured write-up text must be in the HTML without JS")
+	}
+	if !strings.Contains(html, `class="catalog-item"`) || !strings.Contains(html, `class="catalog-detail"`) {
+		t.Fatal("catalog must keep a table with expandable detail rows")
+	}
+	if !strings.Contains(html, "Open a name for the write-up") {
+		t.Fatal("catalog caption missing")
+	}
+}
+
+func TestHowIShip(t *testing.T) {
+	html := renderIndex(loadTestCatalog(t))
+	if !strings.Contains(html, "<h2>How I ship</h2>") {
+		t.Fatal("approach heading must be How I ship")
+	}
+	if strings.Contains(html, "On your computer") || strings.Contains(html, "Source and releases") {
+		t.Fatal("old How I work headings must be gone")
+	}
+	if !strings.Contains(html, "I do not invent users or revenue") {
+		t.Fatal("public-proof boundary missing from How I ship")
+	}
+	if strings.Contains(html, `class="approach-grid"`) || strings.Contains(html, `class="principle"`) {
+		t.Fatal("How I ship must not use a 2-up principle card grid")
+	}
+	if !strings.Contains(html, `class="ship-line"`) {
+		t.Fatal("How I ship must render compact ship-line rows")
 	}
 }
 
@@ -238,7 +287,7 @@ func TestStickyNavContractInStylesheet(t *testing.T) {
 		t.Fatal("site.css must offset in-page jumps so headings are not under the header")
 	}
 	if !strings.Contains(text, "scroll-margin-top") {
-		t.Fatal("site.css must give work cards scroll-margin so #work-* jumps clear the sticky header")
+		t.Fatal("site.css must give catalog items scroll-margin so #work-* jumps clear the sticky header")
 	}
 	if !strings.Contains(text, "--header-h") {
 		t.Fatal("header height token missing for scroll offset")

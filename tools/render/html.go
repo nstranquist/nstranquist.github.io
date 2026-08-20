@@ -22,7 +22,7 @@ func href(url string, class string) string {
 func renderIndex(cat Catalog) string {
 	id := cat.Identity
 	var b strings.Builder
-	b.WriteString(pageHead(id, id.Name, collapseWS(id.Thesis), id.Site+"/", "#work", "Skip to work"))
+	b.WriteString(pageHead(id, id.Name, collapseWS(id.Thesis), id.Site+"/", "#catalog", "Skip to work"))
 	b.WriteString(siteHeader(id, true, len(cat.AlsoPublic) > 0))
 	b.WriteString("<main id=\"main\">\n")
 	b.WriteString("<section class=\"hero wrap\">\n")
@@ -32,47 +32,45 @@ func renderIndex(cat Catalog) string {
 	for _, para := range splitParas(id.Intro) {
 		fmt.Fprintf(&b, "<p class=\"thesis\">%s</p>\n", xml(para))
 	}
-	b.WriteString("<p class=\"hero-actions\">" + href("#work", "text-link") + "See the work</a></p>\n")
+	b.WriteString("<p class=\"hero-actions\">" + href("#catalog", "text-link") + "See the work</a></p>\n")
 	b.WriteString("</section>\n")
 
 	b.WriteString("<section class=\"section wrap\" id=\"catalog\">\n")
 	b.WriteString("<div class=\"section-head\"><h2>Catalog</h2>")
 	fmt.Fprintf(&b, "<p class=\"meta\">%d with GitHub releases</p></div>\n", len(cat.Featured))
 	b.WriteString("<div class=\"catalog-board\"><table>\n")
-	b.WriteString("<caption>Names jump to the write-up. Versions open GitHub.</caption>\n")
+	b.WriteString("<caption>Open a name for the write-up. Versions open GitHub.</caption>\n")
 	b.WriteString("<thead><tr><th></th><th>Product</th><th>Kind</th><th>Stack</th><th>License</th><th>Release</th></tr></thead>\n<tbody>\n")
 	for i, p := range cat.Featured {
-		fmt.Fprintf(&b, "<tr><td data-label=\"#\" class=\"idx\">%02d</td>", i+1)
-		fmt.Fprintf(&b, "<td data-label=\"Product\">%s<span class=\"product-name\">%s</span><span class=\"product-id\">%s</span></a></td>", href("#"+workID(p), ""), xml(p.Name), xml(p.Repo))
+		slug := strings.TrimPrefix(p.ID, "product.")
+		wid := workID(p)
+		detailID := "detail-" + slug
+		toggleID := "toggle-" + slug
+		fmt.Fprintf(&b, "<tr class=\"catalog-item\" id=\"%s\" data-accent=\"%s\">", xml(wid), xml(accentFor(p.ID)))
+		fmt.Fprintf(&b, "<td data-label=\"#\" class=\"idx\">%02d</td>", i+1)
+		fmt.Fprintf(&b, "<td data-label=\"Product\"><button type=\"button\" class=\"catalog-toggle\" aria-expanded=\"false\" aria-controls=\"%s\" id=\"%s\">", xml(detailID), xml(toggleID))
+		fmt.Fprintf(&b, "<span class=\"product-name\">%s</span><span class=\"product-id\">%s</span></button></td>", xml(p.Name), xml(p.Repo))
 		fmt.Fprintf(&b, "<td data-label=\"Kind\" class=\"lane\">%s</td>", xml(p.Lane))
 		fmt.Fprintf(&b, "<td data-label=\"Stack\" class=\"stack\">%s</td>", xml(p.Language))
 		fmt.Fprintf(&b, "<td data-label=\"License\"><span class=\"license\">%s</span></td>", xml(p.License))
 		fmt.Fprintf(&b, "<td data-label=\"Release\">%s%s</a></td></tr>\n", href(p.ProofURL, "proof"), xml(p.Proof))
-	}
-	note := collapseWS(cat.Footnote)
-	if note == "" {
-		note = "Source is on GitHub."
-	}
-	b.WriteString("</tbody></table>\n<p class=\"catalog-note\">" + xml(note) + "</p></div>\n</section>\n")
 
-	b.WriteString("<section class=\"section wrap work\" id=\"work\">\n<div class=\"section-head\"><h2>Selected work</h2><p class=\"meta\">Source and release on each card</p></div>\n<div class=\"work-list\">\n")
-	for i, p := range cat.Featured {
-		fmt.Fprintf(&b, "<article class=\"work-card\" id=\"%s\" data-accent=\"%s\">\n", xml(workID(p)), xml(accentFor(p.ID)))
-		fmt.Fprintf(&b, "<div class=\"work-card-top\"><p class=\"work-num\">%02d</p><span class=\"meta\">%s</span></div>\n", i+1, xml(p.Lane))
-		fmt.Fprintf(&b, "<h3>%s%s</a></h3>\n", href(p.URL, ""), xml(p.Name))
+		b.WriteString("<tr class=\"catalog-detail-row\"><td colspan=\"6\">")
+		fmt.Fprintf(&b, "<div class=\"catalog-detail\" id=\"%s\" role=\"region\" aria-labelledby=\"%s\" hidden>", xml(detailID), xml(toggleID))
+		b.WriteString("<div class=\"catalog-detail-inner\"><div class=\"catalog-detail-body\">")
 		if p.Summary != "" {
-			fmt.Fprintf(&b, "<p class=\"work-summary\">%s</p>\n", xml(p.Summary))
+			fmt.Fprintf(&b, "<p class=\"work-summary\">%s</p>", xml(p.Summary))
 		}
-		fmt.Fprintf(&b, "<p>%s</p>\n", xml(collapseWS(p.Detail)))
+		fmt.Fprintf(&b, "<p>%s</p>", xml(collapseWS(p.Detail)))
 		b.WriteString("<p class=\"work-meta\">")
 		fmt.Fprintf(&b, "<span>%s</span><span>%s</span>", xml(p.Language), xml(p.License))
 		if p.Metric.Value != "" {
 			fmt.Fprintf(&b, "<span class=\"metric\">%s: %s</span>", xml(p.Metric.Label), xml(p.Metric.Value))
 		}
-		b.WriteString("</p>\n")
+		b.WriteString("</p>")
 		if p.ID == "product.docs-puller" {
 			for _, g := range cat.Glossary {
-				fmt.Fprintf(&b, "<p class=\"work-term\">%s: %s</p>\n", xml(g.Term), xml(g.Meaning))
+				fmt.Fprintf(&b, "<p class=\"work-term\">%s: %s</p>", xml(g.Term), xml(g.Meaning))
 			}
 		}
 		b.WriteString("<p class=\"work-actions\">")
@@ -84,9 +82,13 @@ func renderIndex(cat Catalog) string {
 			}
 			fmt.Fprintf(&b, "%s%s</a>", href(p.DemoURL, ""), xml(label))
 		}
-		b.WriteString("</p>\n</article>\n")
+		b.WriteString("</p></div></div></div></td></tr>\n")
 	}
-	b.WriteString("</div>\n</section>\n")
+	note := collapseWS(cat.Footnote)
+	if note == "" {
+		note = "Source is on GitHub."
+	}
+	b.WriteString("</tbody></table>\n<p class=\"catalog-note\">" + xml(note) + "</p></div>\n</section>\n")
 
 	if len(cat.AlsoPublic) > 0 {
 		b.WriteString("<section class=\"section wrap\" id=\"also-public\">\n")
@@ -100,9 +102,9 @@ func renderIndex(cat Catalog) string {
 		b.WriteString("</ul>\n</section>\n")
 	}
 
-	b.WriteString("<section class=\"section wrap approach\" id=\"approach\">\n<h2>How I work</h2>\n<div class=\"approach-grid\">\n")
+	b.WriteString("<section class=\"section wrap approach\" id=\"approach\">\n<h2>How I ship</h2>\n<div class=\"ship-stack\">\n")
 	for _, p := range cat.Principles {
-		fmt.Fprintf(&b, "<article class=\"principle\"><h3>%s</h3><p>%s</p></article>\n", xml(p.Title), xml(p.Body))
+		fmt.Fprintf(&b, "<div class=\"ship-line\"><h3>%s</h3><p>%s</p></div>\n", xml(p.Title), xml(p.Body))
 	}
 	b.WriteString("</div>\n</section>\n")
 
@@ -148,6 +150,7 @@ func pageHead(id Identity, title, description, canonical, skip, skipLabel string
 	b.WriteString("<meta name=\"theme-color\" content=\"#10100f\">\n")
 	b.WriteString("<link rel=\"icon\" href=\"assets/mark.svg\" type=\"image/svg+xml\">\n")
 	b.WriteString("<link rel=\"stylesheet\" href=\"site.css\">\n")
+	b.WriteString("<noscript><style>.catalog-detail[hidden]{display:block}.catalog-detail-inner{grid-template-rows:1fr}.catalog-detail-body{opacity:1}</style></noscript>\n")
 	b.WriteString("<script src=\"site.js\" defer></script>\n")
 	b.WriteString("</head>\n<body>\n")
 	fmt.Fprintf(&b, "<a class=\"skip\" href=\"%s\">%s</a>\n", xml(skip), xml(skipLabel))
@@ -155,15 +158,15 @@ func pageHead(id Identity, title, description, canonical, skip, skipLabel string
 }
 
 func siteHeader(id Identity, onHome bool, alsoPublic bool) string {
-	catalog, work, also, approach := "#catalog", "#work", "#also-public", "#approach"
+	catalog, also, approach := "#catalog", "#also-public", "#approach"
 	if !onHome {
-		catalog, work, also, approach = "./#catalog", "./#work", "./#also-public", "./#approach"
+		catalog, also, approach = "./#catalog", "./#also-public", "./#approach"
 	}
 	var b strings.Builder
 	b.WriteString("<header class=\"site-header\">\n<div class=\"wrap\">\n")
 	b.WriteString(href("./", "brand") + markSVG() + "<span class=\"brand-name\">" + xml(id.Name) + "</span></a>\n")
 	b.WriteString("<nav aria-label=\"Primary\">\n")
-	fmt.Fprintf(&b, "%s</a>\n%s</a>\n", navItem(catalog, "catalog", "Catalog"), navItem(work, "work", "Work"))
+	fmt.Fprintf(&b, "%s</a>\n", navItem(catalog, "catalog", "Catalog"))
 	if alsoPublic {
 		fmt.Fprintf(&b, "%s</a>\n", navItem(also, "also-public", "Also on GitHub"))
 	}

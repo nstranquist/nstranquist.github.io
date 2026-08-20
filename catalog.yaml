@@ -199,10 +199,10 @@ toolbox:
   - AWS
   - Cloudflare
 principles:
-  - title: On your computer
-    body: The default path runs locally. You do not need a cloud account.
-  - title: Source and releases
-    body: I publish source, tests, and tagged releases. I do not invent users or revenue.
+  - title: Local
+    body: The tools run on your machine. You do not need a cloud account.
+  - title: Public
+    body: I publish source, tests, and a tagged release. I do not invent users or revenue.
 footnote: Source is on GitHub.
 glossary:
   - term: BM25
