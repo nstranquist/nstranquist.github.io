@@ -48,6 +48,10 @@
       return id ? document.getElementById(id) : null;
     }
 
+    function revealFor(detail) {
+      return detail ? detail.querySelector(".catalog-reveal") : null;
+    }
+
     function clearPending(row) {
       var job = pending.get(row);
       if (!job) {
@@ -56,8 +60,8 @@
       if (job.timer) {
         clearTimeout(job.timer);
       }
-      if (job.detail && job.onEnd) {
-        job.detail.removeEventListener("transitionend", job.onEnd);
+      if (job.node && job.onEnd) {
+        job.node.removeEventListener("transitionend", job.onEnd);
       }
       pending.delete(row);
     }
@@ -99,16 +103,12 @@
       row.classList.remove("is-open");
       syncHash(row, false);
 
-      if (!detail) {
+      if (!detail || detail.hidden || reduceMotion()) {
         hideDetail(row, detail);
         return;
       }
 
-      if (reduceMotion() || detail.hidden) {
-        hideDetail(row, detail);
-        return;
-      }
-
+      var reveal = revealFor(detail);
       var done = false;
       function finish() {
         if (done) {
@@ -119,13 +119,15 @@
         hideDetail(row, detail);
       }
       function onEnd(e) {
-        if (e.target === detail) {
+        if (e.target === reveal && e.propertyName === "grid-template-rows") {
           finish();
         }
       }
-      detail.addEventListener("transitionend", onEnd);
+      if (reveal) {
+        reveal.addEventListener("transitionend", onEnd);
+      }
       pending.set(row, {
-        detail: detail,
+        node: reveal,
         onEnd: onEnd,
         timer: setTimeout(finish, CLOSE_MS)
       });
@@ -182,7 +184,7 @@
         if (e.target.closest("a")) {
           return;
         }
-        if (e.target.closest(".catalog-toggle") || e.target.closest(".sort")) {
+        if (e.target.closest(".catalog-toggle")) {
           return;
         }
         if (btn) {
@@ -210,125 +212,6 @@
 
     window.addEventListener("hashchange", openFromHash);
     openFromHash();
-  })();
-
-
-  (function catalogSort() {
-    var table = document.querySelector(".catalog-table");
-    if (!table) {
-      return;
-    }
-    var buttons = table.querySelectorAll(".sort");
-    if (!buttons.length) {
-      return;
-    }
-
-    var key = "";
-    var dir = "none";
-
-    function rows() {
-      return Array.prototype.slice.call(table.querySelectorAll(".catalog-item"));
-    }
-
-    function versionParts(value) {
-      var m = /^v?(\d+)\.(\d+)\.(\d+)/i.exec(value || "");
-      if (!m) {
-        return null;
-      }
-      return [parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3], 10)];
-    }
-
-    function cmpProof(a, b) {
-      var lastA = /no public tag/i.test(a);
-      var lastB = /no public tag/i.test(b);
-      if (lastA !== lastB) {
-        return lastA ? 1 : -1;
-      }
-      var va = versionParts(a);
-      var vb = versionParts(b);
-      if (va && vb) {
-        for (var i = 0; i < 3; i++) {
-          if (va[i] !== vb[i]) {
-            return va[i] - vb[i];
-          }
-        }
-        return 0;
-      }
-      return String(a || "").localeCompare(String(b || ""), undefined, { numeric: true, sensitivity: "base" });
-    }
-
-    function valueOf(row, sortKey) {
-      return row.getAttribute("data-" + sortKey) || "";
-    }
-
-    function compare(sortKey, a, b) {
-      var result;
-      if (sortKey === "index") {
-        result = (Number(a.getAttribute("data-index")) || 0) - (Number(b.getAttribute("data-index")) || 0);
-      } else if (sortKey === "proof") {
-        result = cmpProof(valueOf(a, "proof"), valueOf(b, "proof"));
-      } else {
-        result = valueOf(a, sortKey).localeCompare(valueOf(b, sortKey), undefined, {
-          numeric: true,
-          sensitivity: "base"
-        });
-      }
-      if (result === 0) {
-        return (Number(a.getAttribute("data-index")) || 0) - (Number(b.getAttribute("data-index")) || 0);
-      }
-      return result;
-    }
-
-    function setAria(active, nextDir) {
-      buttons.forEach(function (btn) {
-        var header = btn.closest("[role=\"columnheader\"]");
-        if (!header) {
-          return;
-        }
-        if (btn === active && nextDir === "asc") {
-          header.setAttribute("aria-sort", "ascending");
-        } else if (btn === active && nextDir === "desc") {
-          header.setAttribute("aria-sort", "descending");
-        } else {
-          header.setAttribute("aria-sort", "none");
-        }
-      });
-    }
-
-    function apply(list) {
-      list.forEach(function (row) {
-        table.appendChild(row);
-      });
-    }
-
-    buttons.forEach(function (btn) {
-      btn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-        var next = btn.getAttribute("data-sort");
-        if (!next) {
-          return;
-        }
-        if (key === next) {
-          dir = dir === "asc" ? "desc" : dir === "desc" ? "none" : "asc";
-          if (dir === "none") {
-            key = "";
-          }
-        } else {
-          key = next;
-          dir = "asc";
-        }
-
-        var list = rows();
-        var sortKey = dir === "none" ? "index" : key;
-        list.sort(function (a, b) {
-          var result = compare(sortKey, a, b);
-          return dir === "desc" ? -result : result;
-        });
-        setAria(btn, dir);
-        apply(list);
-      });
-    });
   })();
 
   var nav = document.querySelectorAll("nav [data-section]");

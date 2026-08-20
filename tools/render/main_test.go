@@ -243,26 +243,26 @@ func TestCatalogRowsExpandInPlace(t *testing.T) {
 	if !strings.Contains(html, `id="toggle-docs-puller"`) || !strings.Contains(html, `id="detail-docs-puller"`) {
 		t.Fatal("docs-puller toggle and detail region ids missing")
 	}
+	if !strings.Contains(html, `id="work-docs-puller"`) {
+		t.Fatal("docs-puller must keep a stable #work-docs-puller id")
+	}
 	first := cat.Featured[0]
 	if first.Summary == "" || !strings.Contains(html, first.Summary) {
 		t.Fatal("featured write-up text must be in the HTML without JS")
 	}
-	if !strings.Contains(html, `class="catalog-item"`) || !strings.Contains(html, `class="catalog-detail"`) || !strings.Contains(html, `class="catalog-toggle"`) {
-		t.Fatal("catalog must render item, toggle, and detail classes")
-	}
-	if !strings.Contains(html, `class="catalog-head"`) {
-		t.Fatal("catalog must render a column header row")
-	}
-	if !strings.Contains(html, `role="table"`) {
-		t.Fatal("catalog must expose role=table")
+	if !strings.Contains(html, `class="catalog-item"`) || !strings.Contains(html, `class="catalog-toggle"`) || !strings.Contains(html, `class="catalog-detail"`) {
+		t.Fatal("catalog must render catalog-item, catalog-toggle, and catalog-detail")
 	}
 	if !strings.Contains(html, `class="chevron" aria-hidden="true"`) {
 		t.Fatal("catalog toggle must include an aria-hidden chevron")
 	}
+	if !strings.Contains(html, `class="catalog-panel"`) || !strings.Contains(html, `class="catalog-reveal"`) {
+		t.Fatal("open write-up must use a full-width panel with a reveal wrapper")
+	}
 	if !strings.Contains(html, "Open a name for the write-up") {
 		t.Fatal("catalog caption missing")
 	}
-	if !strings.Contains(html, `<noscript><style>.catalog-detail[hidden]{display:block}</style></noscript>`) {
+	if !strings.Contains(html, `<noscript><style>.catalog-detail[hidden]{display:block}`) {
 		t.Fatal("no-JS users must still see write-ups via noscript")
 	}
 }
@@ -276,8 +276,11 @@ func TestCatalogStylesDoNotOverrideHidden(t *testing.T) {
 	if strings.Contains(text, ".catalog-detail[hidden]") {
 		t.Fatal("site.css must not override the hidden attribute; leftover gaps come from display:block on [hidden]")
 	}
-	if strings.Contains(text, ".work-card") || strings.Contains(text, ".work-list") || strings.Contains(text, ".approach-grid") || strings.Contains(text, ".principle") {
-		t.Fatal("dead work-card / principle CSS must be gone")
+	if strings.Contains(text, ".work-card") || strings.Contains(text, ".work-list") {
+		t.Fatal("dead work-card / work-list CSS must be gone")
+	}
+	if strings.Contains(text, "transition: all") {
+		t.Fatal("site.css must not use transition: all")
 	}
 	if !strings.Contains(text, ".catalog-item:nth-child(odd)") {
 		t.Fatal("zebra striping must use catalog-item:nth-child(odd)")
@@ -303,38 +306,6 @@ func TestHowIShip(t *testing.T) {
 	}
 	if !strings.Contains(html, `class="ship-line"`) {
 		t.Fatal("How I ship must render compact ship-line rows")
-	}
-	if !strings.Contains(html, "<h3>Local</h3>") || !strings.Contains(html, "<h3>Public</h3>") {
-		t.Fatal("How I ship must keep Local and Public lines")
-	}
-}
-
-func TestCatalogSortMarkup(t *testing.T) {
-	html := renderIndex(loadTestCatalog(t))
-	for _, needle := range []string{
-		`type="button" class="sort"`,
-		`data-sort="name"`,
-		`data-sort="lane"`,
-		`data-sort="stack"`,
-		`data-sort="license"`,
-		`data-sort="proof"`,
-		`data-name=`,
-		`data-lane=`,
-		`data-stack=`,
-		`data-license=`,
-		`data-proof=`,
-		`data-index="0"`,
-	} {
-		if !strings.Contains(html, needle) {
-			t.Errorf("catalog sort markup missing %s", needle)
-		}
-	}
-	if !strings.Contains(html, `data-sort="index"`) {
-		t.Fatal("idx header should sort by original index")
-	}
-	first := loadTestCatalog(t).Featured[0]
-	if !strings.Contains(html, `data-name="`+first.Name+`"`) || !strings.Contains(html, `data-proof="`+first.Proof+`"`) {
-		t.Fatal("first catalog item must carry renderer sort data")
 	}
 }
 
