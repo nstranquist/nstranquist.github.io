@@ -8,12 +8,7 @@ identity:
   role: Senior software engineer
   location: St. Louis
   thesis: Full-stack products, developer platforms, and AI systems.
-  intro: |
-    Senior software engineer. Full-stack products, developer platforms, and AI systems.
-
-    This page lists public GitHub work. The first group has tagged releases.
-    Native Mac tools sit in that group as systems work. The second group is
-    more public source.
+  intro: Full-stack products, developer platforms, and AI systems.
   github: https://github.com/nstranquist
   linkedin: https://linkedin.com/in/nstranquist
   site: https://nstranquist.github.io

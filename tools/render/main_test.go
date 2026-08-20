@@ -100,7 +100,10 @@ func TestIndexIsASiteNotAGreeting(t *testing.T) {
 	if !strings.Contains(html, "example data only") {
 		t.Fatal("jobkit example-data boundary missing")
 	}
-	if !strings.Contains(html, "id=\"glossary\"") || !strings.Contains(html, "BM25") {
+	if strings.Contains(html, `id="glossary"`) {
+		t.Fatal("index must not render a standalone glossary section")
+	}
+	if !strings.Contains(html, "BM25") {
 		t.Fatal("index must define BM25")
 	}
 	for _, phrase := range []string{
@@ -184,8 +187,11 @@ func TestRenderedPagesLinkContract(t *testing.T) {
 	if strings.Contains(missing, `href="#catalog"`) || strings.Contains(missing, `href="#work"`) || strings.Contains(missing, `href="#approach"`) || strings.Contains(missing, `href="#glossary"`) {
 		t.Fatal("404 must not use bare hash nav to missing sections")
 	}
-	if !strings.Contains(missing, `href="./#catalog"`) || !strings.Contains(missing, `href="./#work"`) || !strings.Contains(missing, `href="./#approach"`) || !strings.Contains(missing, `href="./#glossary"`) {
+	if !strings.Contains(missing, `href="./#catalog"`) || !strings.Contains(missing, `href="./#work"`) || !strings.Contains(missing, `href="./#approach"`) {
 		t.Fatal("404 in-site nav should send visitors home to those sections")
+	}
+	if strings.Contains(missing, `href="./#glossary"`) || strings.Contains(missing, `href="#glossary"`) {
+		t.Fatal("404 must not link to #glossary")
 	}
 	if strings.Contains(missing, `href="./" target="_blank"`) {
 		t.Fatal("404 return/home must stay same-tab")
@@ -230,6 +236,9 @@ func TestStickyNavContractInStylesheet(t *testing.T) {
 	}
 	if !strings.Contains(text, "scroll-padding-top") {
 		t.Fatal("site.css must offset in-page jumps so headings are not under the header")
+	}
+	if !strings.Contains(text, "scroll-margin-top") {
+		t.Fatal("site.css must give work cards scroll-margin so #work-* jumps clear the sticky header")
 	}
 	if !strings.Contains(text, "--header-h") {
 		t.Fatal("header height token missing for scroll offset")

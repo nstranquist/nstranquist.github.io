@@ -32,7 +32,6 @@ func renderIndex(cat Catalog) string {
 	for _, para := range splitParas(id.Intro) {
 		fmt.Fprintf(&b, "<p class=\"thesis\">%s</p>\n", xml(para))
 	}
-	b.WriteString("<div class=\"chips\"><span class=\"chip\">Platforms</span><span class=\"chip\">Local tools</span><span class=\"chip\">Full-stack</span></div>\n")
 	b.WriteString("<p class=\"hero-actions\">" + href("#work", "text-link") + "See the work</a></p>\n")
 	b.WriteString("</section>\n")
 
@@ -70,7 +69,13 @@ func renderIndex(cat Catalog) string {
 		if p.Metric.Value != "" {
 			fmt.Fprintf(&b, "<span class=\"metric\">%s: %s</span>", xml(p.Metric.Label), xml(p.Metric.Value))
 		}
-		b.WriteString("</p>\n<p class=\"work-actions\">")
+		b.WriteString("</p>\n")
+		if p.ID == "product.docs-puller" {
+			for _, g := range cat.Glossary {
+				fmt.Fprintf(&b, "<p class=\"work-term\">%s: %s</p>\n", xml(g.Term), xml(g.Meaning))
+			}
+		}
+		b.WriteString("<p class=\"work-actions\">")
 		fmt.Fprintf(&b, "%sSource</a>%sRelease %s</a>", href(p.URL, ""), href(p.ProofURL, ""), xml(p.Proof))
 		if p.DemoURL != "" {
 			label := p.DemoLabel
@@ -100,15 +105,6 @@ func renderIndex(cat Catalog) string {
 		fmt.Fprintf(&b, "<article class=\"principle\"><h3>%s</h3><p>%s</p></article>\n", xml(p.Title), xml(p.Body))
 	}
 	b.WriteString("</div>\n</section>\n")
-
-	if len(cat.Glossary) > 0 {
-		b.WriteString("<section class=\"section wrap glossary\" id=\"glossary\">\n<div class=\"section-head\"><h2>Terms</h2></div>\n")
-		b.WriteString("<p class=\"lede-note\">One term used above.</p>\n<dl>\n")
-		for _, g := range cat.Glossary {
-			fmt.Fprintf(&b, "<div class=\"term\"><dt>%s</dt><dd>%s</dd></div>\n", xml(g.Term), xml(g.Meaning))
-		}
-		b.WriteString("</dl>\n</section>\n")
-	}
 
 	b.WriteString("<section class=\"section wrap\" id=\"toolbox\">\n<div class=\"section-head\"><h2>Toolbox</h2></div>\n<div class=\"toolbox\">")
 	for _, tool := range cat.Toolbox {
@@ -159,9 +155,9 @@ func pageHead(id Identity, title, description, canonical, skip, skipLabel string
 }
 
 func siteHeader(id Identity, onHome bool, alsoPublic bool) string {
-	catalog, work, also, approach, glossary := "#catalog", "#work", "#also-public", "#approach", "#glossary"
+	catalog, work, also, approach := "#catalog", "#work", "#also-public", "#approach"
 	if !onHome {
-		catalog, work, also, approach, glossary = "./#catalog", "./#work", "./#also-public", "./#approach", "./#glossary"
+		catalog, work, also, approach = "./#catalog", "./#work", "./#also-public", "./#approach"
 	}
 	var b strings.Builder
 	b.WriteString("<header class=\"site-header\">\n<div class=\"wrap\">\n")
@@ -171,9 +167,8 @@ func siteHeader(id Identity, onHome bool, alsoPublic bool) string {
 	if alsoPublic {
 		fmt.Fprintf(&b, "%s</a>\n", navItem(also, "also-public", "Also on GitHub"))
 	}
-	fmt.Fprintf(&b, "%s</a>\n%s</a>\n%sGitHub</a>\n",
+	fmt.Fprintf(&b, "%s</a>\n%sGitHub</a>\n",
 		navItem(approach, "approach", "Approach"),
-		navItem(glossary, "glossary", "Terms"),
 		href(id.GitHub, ""))
 	b.WriteString("</nav>\n")
 	b.WriteString("<button type=\"button\" class=\"theme-toggle\" data-theme-toggle aria-label=\"Color theme: System. Switch theme\">System</button>\n")
