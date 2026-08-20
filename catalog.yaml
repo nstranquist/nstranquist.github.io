@@ -41,16 +41,16 @@ featured:
     name: Nicos Catalog
     repo: nstranquist/nicos-catalog
     url: https://github.com/nstranquist/nicos-catalog
-    proof_url: https://github.com/nstranquist/nicos-catalog/releases/tag/v0.1.1
+    proof_url: https://github.com/nstranquist/nicos-catalog/releases/tag/v0.2.0
     license: Apache-2.0
     language: Go
     lane: software catalog
-    proof: v0.1.1
+    proof: v0.2.0
     summary: A local engine for software catalogs.
     detail: >-
       Full-text and relationship search, plugins, and a check when files no
       longer match the catalog. Includes a local Explorer UI. The GitHub
-      release is v0.1.1.
+      release is v0.2.0.
   - id: product.openbook
     name: Openbook
     repo: nstranquist/openbook
