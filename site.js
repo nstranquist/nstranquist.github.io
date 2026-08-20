@@ -184,7 +184,7 @@
         if (e.target.closest("a")) {
           return;
         }
-        if (e.target.closest(".catalog-toggle")) {
+        if (e.target.closest(".catalog-toggle") || e.target.closest(".sort")) {
           return;
         }
         if (btn) {
@@ -212,6 +212,152 @@
 
     window.addEventListener("hashchange", openFromHash);
     openFromHash();
+  })();
+
+
+  (function catalogSort() {
+    var board = document.querySelector(".catalog-board");
+    var listEl = document.querySelector(".catalog-list");
+    if (!board || !listEl) {
+      return;
+    }
+    var buttons = board.querySelectorAll(".sort");
+    if (!buttons.length) {
+      return;
+    }
+
+    var key = "";
+    var dir = "none";
+
+    function rows() {
+      return Array.prototype.slice.call(listEl.querySelectorAll(".catalog-item"));
+    }
+
+    function versionParts(value) {
+      var m = /^v?(\d+)\.(\d+)\.(\d+)/i.exec(value || "");
+      if (!m) {
+        return null;
+      }
+      return [parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3], 10)];
+    }
+
+    function emptyProof(value) {
+      var v = String(value || "").trim();
+      return !v || /no public tag/i.test(v);
+    }
+
+    function cmpProof(a, b) {
+      var lastA = emptyProof(a);
+      var lastB = emptyProof(b);
+      if (lastA !== lastB) {
+        return lastA ? 1 : -1;
+      }
+      var va = versionParts(a);
+      var vb = versionParts(b);
+      if (va && vb) {
+        for (var i = 0; i < 3; i++) {
+          if (va[i] !== vb[i]) {
+            return va[i] - vb[i];
+          }
+        }
+        return 0;
+      }
+      if (va && !vb) {
+        return -1;
+      }
+      if (!va && vb) {
+        return 1;
+      }
+      return String(a || "").localeCompare(String(b || ""), undefined, { numeric: true, sensitivity: "base" });
+    }
+
+    function valueOf(row, sortKey) {
+      return row.getAttribute("data-" + sortKey) || "";
+    }
+
+    function compare(sortKey, a, b) {
+      var result;
+      if (sortKey === "index") {
+        result = (Number(a.getAttribute("data-index")) || 0) - (Number(b.getAttribute("data-index")) || 0);
+      } else if (sortKey === "proof") {
+        result = cmpProof(valueOf(a, "proof"), valueOf(b, "proof"));
+      } else {
+        result = valueOf(a, sortKey).localeCompare(valueOf(b, sortKey), undefined, {
+          numeric: true,
+          sensitivity: "base"
+        });
+      }
+      if (result === 0) {
+        return (Number(a.getAttribute("data-index")) || 0) - (Number(b.getAttribute("data-index")) || 0);
+      }
+      return result;
+    }
+
+    function headerOf(btn) {
+      return btn.closest("[aria-sort]") || btn.parentElement;
+    }
+
+    function setAria(active, nextDir) {
+      buttons.forEach(function (btn) {
+        var header = headerOf(btn);
+        if (!header) {
+          return;
+        }
+        if (btn === active && nextDir === "asc") {
+          header.setAttribute("aria-sort", "ascending");
+        } else if (btn === active && nextDir === "desc") {
+          header.setAttribute("aria-sort", "descending");
+        } else {
+          header.setAttribute("aria-sort", "none");
+        }
+      });
+    }
+
+    function apply(list) {
+      var i;
+      for (i = 0; i < list.length; i++) {
+        var ref = listEl.children[i];
+        if (ref !== list[i]) {
+          listEl.insertBefore(list[i], ref);
+        }
+      }
+    }
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        var next = btn.getAttribute("data-sort");
+        if (!next) {
+          return;
+        }
+        if (key === next) {
+          dir = dir === "asc" ? "desc" : dir === "desc" ? "none" : "asc";
+          if (dir === "none") {
+            key = "";
+          }
+        } else {
+          key = next;
+          dir = "asc";
+        }
+
+        var list = rows();
+        var sortKey = dir === "none" ? "index" : key;
+        list.sort(function (a, b) {
+          if (sortKey === "proof") {
+            var emptyA = emptyProof(valueOf(a, "proof"));
+            var emptyB = emptyProof(valueOf(b, "proof"));
+            if (emptyA !== emptyB) {
+              return emptyA ? 1 : -1;
+            }
+          }
+          var result = compare(sortKey, a, b);
+          return dir === "desc" ? -result : result;
+        });
+        setAria(btn, dir);
+        apply(list);
+      });
+    });
   })();
 
   var nav = document.querySelectorAll("nav [data-section]");

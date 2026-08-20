@@ -394,6 +394,50 @@ h1 {
   letter-spacing: 0.14em;
 }
 
+.catalog-head .sort {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.catalog-head .sort:hover {
+  color: var(--fg);
+}
+
+.catalog-head [aria-sort="ascending"] .sort,
+.catalog-head [aria-sort="descending"] .sort {
+  color: var(--fg);
+}
+
+.catalog-head [aria-sort="ascending"] .sort::after,
+.catalog-head [aria-sort="descending"] .sort::after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 0.32em;
+  border-left: 0.22em solid transparent;
+  border-right: 0.22em solid transparent;
+}
+
+.catalog-head [aria-sort="ascending"] .sort::after {
+  border-bottom: 0.28em solid currentColor;
+}
+
+.catalog-head [aria-sort="descending"] .sort::after {
+  border-top: 0.28em solid currentColor;
+}
+
 .catalog-list {
   min-width: 52rem;
 }

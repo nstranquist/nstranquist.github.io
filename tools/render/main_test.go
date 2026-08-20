@@ -307,6 +307,46 @@ func TestHowIShip(t *testing.T) {
 	if !strings.Contains(html, `class="ship-line"`) {
 		t.Fatal("How I ship must render compact ship-line rows")
 	}
+	if !strings.Contains(html, `<div class="section-head"><h2>How I ship</h2></div>`) {
+		t.Fatal("How I ship title must sit in a section-head so it is not flush on Local/Public")
+	}
+}
+
+func TestCatalogSortMarkup(t *testing.T) {
+	html := renderIndex(loadTestCatalog(t))
+	for _, needle := range []string{
+		`type="button" class="sort"`,
+		`data-sort="name"`,
+		`data-sort="lane"`,
+		`data-sort="stack"`,
+		`data-sort="license"`,
+		`data-sort="proof"`,
+		`data-name=`,
+		`data-lane=`,
+		`data-stack=`,
+		`data-license=`,
+		`data-proof=`,
+		`data-index="0"`,
+	} {
+		if !strings.Contains(html, needle) {
+			t.Errorf("catalog sort markup missing %s", needle)
+		}
+	}
+	if !strings.Contains(html, `data-sort="index"`) {
+		t.Fatal("idx header should sort by original index")
+	}
+	first := loadTestCatalog(t).Featured[0]
+	if !strings.Contains(html, `data-name="`+first.Name+`"`) || !strings.Contains(html, `data-proof="`+first.Proof+`"`) {
+		t.Fatal("first catalog item must carry renderer sort data")
+	}
+	js, err := os.ReadFile(filepath.Join(repoRoot(t), "site.js"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	script := string(js)
+	if !strings.Contains(script, `data-sort`) || !strings.Contains(script, "insertBefore") {
+		t.Fatal("site.js must implement catalog sort via data-sort and insertBefore")
+	}
 }
 
 func TestStickyNavContractInStylesheet(t *testing.T) {
