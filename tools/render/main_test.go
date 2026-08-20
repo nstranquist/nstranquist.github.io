@@ -243,15 +243,50 @@ func TestCatalogRowsExpandInPlace(t *testing.T) {
 	if !strings.Contains(html, `id="toggle-docs-puller"`) || !strings.Contains(html, `id="detail-docs-puller"`) {
 		t.Fatal("docs-puller toggle and detail region ids missing")
 	}
+	if !strings.Contains(html, `id="work-docs-puller"`) {
+		t.Fatal("docs-puller must keep a stable #work-docs-puller id")
+	}
 	first := cat.Featured[0]
 	if first.Summary == "" || !strings.Contains(html, first.Summary) {
 		t.Fatal("featured write-up text must be in the HTML without JS")
 	}
-	if !strings.Contains(html, `class="catalog-item"`) || !strings.Contains(html, `class="catalog-detail"`) {
-		t.Fatal("catalog must keep a table with expandable detail rows")
+	if !strings.Contains(html, `class="catalog-item"`) || !strings.Contains(html, `class="catalog-toggle"`) || !strings.Contains(html, `class="catalog-detail"`) {
+		t.Fatal("catalog must render catalog-item, catalog-toggle, and catalog-detail")
+	}
+	if !strings.Contains(html, `class="chevron" aria-hidden="true"`) {
+		t.Fatal("catalog toggle must include an aria-hidden chevron")
+	}
+	if !strings.Contains(html, `class="catalog-panel"`) || !strings.Contains(html, `class="catalog-reveal"`) {
+		t.Fatal("open write-up must use a full-width panel with a reveal wrapper")
 	}
 	if !strings.Contains(html, "Open a name for the write-up") {
 		t.Fatal("catalog caption missing")
+	}
+	if !strings.Contains(html, `<noscript><style>.catalog-detail[hidden]{display:block}`) {
+		t.Fatal("no-JS users must still see write-ups via noscript")
+	}
+}
+
+func TestCatalogStylesDoNotOverrideHidden(t *testing.T) {
+	css, err := os.ReadFile(filepath.Join(repoRoot(t), "site.css"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	text := string(css)
+	if strings.Contains(text, ".catalog-detail[hidden]") {
+		t.Fatal("site.css must not override the hidden attribute; leftover gaps come from display:block on [hidden]")
+	}
+	if strings.Contains(text, ".work-card") || strings.Contains(text, ".work-list") {
+		t.Fatal("dead work-card / work-list CSS must be gone")
+	}
+	if strings.Contains(text, "transition: all") {
+		t.Fatal("site.css must not use transition: all")
+	}
+	if !strings.Contains(text, ".catalog-item:nth-child(odd)") {
+		t.Fatal("zebra striping must use catalog-item:nth-child(odd)")
+	}
+	if strings.Contains(text, "nth-child(4n") {
+		t.Fatal("4n zebra hack must be gone")
 	}
 }
 
@@ -271,6 +306,46 @@ func TestHowIShip(t *testing.T) {
 	}
 	if !strings.Contains(html, `class="ship-line"`) {
 		t.Fatal("How I ship must render compact ship-line rows")
+	}
+	if !strings.Contains(html, `<div class="section-head"><h2>How I ship</h2></div>`) {
+		t.Fatal("How I ship title must sit in a section-head so it is not flush on Local/Public")
+	}
+}
+
+func TestCatalogSortMarkup(t *testing.T) {
+	html := renderIndex(loadTestCatalog(t))
+	for _, needle := range []string{
+		`type="button" class="sort"`,
+		`data-sort="name"`,
+		`data-sort="lane"`,
+		`data-sort="stack"`,
+		`data-sort="license"`,
+		`data-sort="proof"`,
+		`data-name=`,
+		`data-lane=`,
+		`data-stack=`,
+		`data-license=`,
+		`data-proof=`,
+		`data-index="0"`,
+	} {
+		if !strings.Contains(html, needle) {
+			t.Errorf("catalog sort markup missing %s", needle)
+		}
+	}
+	if !strings.Contains(html, `data-sort="index"`) {
+		t.Fatal("idx header should sort by original index")
+	}
+	first := loadTestCatalog(t).Featured[0]
+	if !strings.Contains(html, `data-name="`+first.Name+`"`) || !strings.Contains(html, `data-proof="`+first.Proof+`"`) {
+		t.Fatal("first catalog item must carry renderer sort data")
+	}
+	js, err := os.ReadFile(filepath.Join(repoRoot(t), "site.js"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	script := string(js)
+	if !strings.Contains(script, `data-sort`) || !strings.Contains(script, "insertBefore") {
+		t.Fatal("site.js must implement catalog sort via data-sort and insertBefore")
 	}
 }
 
