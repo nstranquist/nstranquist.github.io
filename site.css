@@ -327,6 +327,7 @@ h1 {
 }
 
 .section {
+  scroll-margin-top: var(--header-h);
   padding: 0 0 clamp(3.5rem, 8vw, 6rem);
 }
 
@@ -356,7 +357,8 @@ h1 {
 }
 
 .catalog-board {
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   border: 1px solid var(--line);
   border-radius: 1.25rem;
   background: var(--panel);
@@ -507,6 +509,7 @@ h1 {
 
 .work-card {
   --accent: var(--signal);
+  scroll-margin-top: var(--header-h);
   display: grid;
   gap: 0.75rem;
   padding: 1.35rem 1.4rem 1.4rem;
@@ -610,7 +613,7 @@ h1 {
 
 @media (min-width: 800px) {
   .approach-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
