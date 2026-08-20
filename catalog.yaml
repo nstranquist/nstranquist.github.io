@@ -170,11 +170,11 @@ also_public:
     name: nicos-flag-eval
     repo: nstranquist/nicos-flag-eval
     url: https://github.com/nstranquist/nicos-flag-eval
-    proof_url: https://github.com/nstranquist/nicos-flag-eval
+    proof_url: https://github.com/nstranquist/nicos-flag-eval/releases/tag/v0.1.7
     license: MIT
     language: Go
     lane: feature flags
-    proof: no public tag
+    proof: v0.1.7
     summary: Feature-flag evaluator in Go, TypeScript, and Swift. Demo data only.
   - id: product.nicos-window-switcher
     name: Nicos Window Switcher
