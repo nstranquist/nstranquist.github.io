@@ -247,11 +247,43 @@ func TestCatalogRowsExpandInPlace(t *testing.T) {
 	if first.Summary == "" || !strings.Contains(html, first.Summary) {
 		t.Fatal("featured write-up text must be in the HTML without JS")
 	}
-	if !strings.Contains(html, `class="catalog-item"`) || !strings.Contains(html, `class="catalog-detail"`) {
-		t.Fatal("catalog must keep a table with expandable detail rows")
+	if !strings.Contains(html, `class="catalog-item"`) || !strings.Contains(html, `class="catalog-detail"`) || !strings.Contains(html, `class="catalog-toggle"`) {
+		t.Fatal("catalog must render item, toggle, and detail classes")
+	}
+	if !strings.Contains(html, `class="catalog-head"`) {
+		t.Fatal("catalog must render a column header row")
+	}
+	if !strings.Contains(html, `role="table"`) {
+		t.Fatal("catalog must expose role=table")
+	}
+	if !strings.Contains(html, `class="chevron" aria-hidden="true"`) {
+		t.Fatal("catalog toggle must include an aria-hidden chevron")
 	}
 	if !strings.Contains(html, "Open a name for the write-up") {
 		t.Fatal("catalog caption missing")
+	}
+	if !strings.Contains(html, `<noscript><style>.catalog-detail[hidden]{display:block}</style></noscript>`) {
+		t.Fatal("no-JS users must still see write-ups via noscript")
+	}
+}
+
+func TestCatalogStylesDoNotOverrideHidden(t *testing.T) {
+	css, err := os.ReadFile(filepath.Join(repoRoot(t), "site.css"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	text := string(css)
+	if strings.Contains(text, ".catalog-detail[hidden]") {
+		t.Fatal("site.css must not override the hidden attribute; leftover gaps come from display:block on [hidden]")
+	}
+	if strings.Contains(text, ".work-card") || strings.Contains(text, ".work-list") || strings.Contains(text, ".approach-grid") || strings.Contains(text, ".principle") {
+		t.Fatal("dead work-card / principle CSS must be gone")
+	}
+	if !strings.Contains(text, ".catalog-item:nth-child(odd)") {
+		t.Fatal("zebra striping must use catalog-item:nth-child(odd)")
+	}
+	if strings.Contains(text, "nth-child(4n") {
+		t.Fatal("4n zebra hack must be gone")
 	}
 }
 

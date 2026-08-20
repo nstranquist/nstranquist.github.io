@@ -35,6 +35,12 @@
     }
 
     var openRow = null;
+    var pending = new WeakMap();
+    var CLOSE_MS = 280;
+
+    function reduceMotion() {
+      return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
 
     function detailFor(row) {
       var btn = row.querySelector(".catalog-toggle");
@@ -42,25 +48,87 @@
       return id ? document.getElementById(id) : null;
     }
 
+    function clearPending(row) {
+      var job = pending.get(row);
+      if (!job) {
+        return;
+      }
+      if (job.timer) {
+        clearTimeout(job.timer);
+      }
+      if (job.detail && job.onEnd) {
+        job.detail.removeEventListener("transitionend", job.onEnd);
+      }
+      pending.delete(row);
+    }
+
+    function syncHash(row, opening) {
+      if (!row || !row.id) {
+        return;
+      }
+      if (opening) {
+        if (location.hash !== "#" + row.id) {
+          history.replaceState(null, "", "#" + row.id);
+        }
+        return;
+      }
+      if (location.hash === "#" + row.id) {
+        history.replaceState(null, "", location.pathname + location.search);
+      }
+    }
+
+    function hideDetail(row, detail) {
+      if (detail) {
+        detail.hidden = true;
+      }
+      if (openRow === row) {
+        openRow = null;
+      }
+    }
+
     function close(row) {
       if (!row) {
         return;
       }
+      clearPending(row);
       var btn = row.querySelector(".catalog-toggle");
       var detail = detailFor(row);
       if (btn) {
         btn.setAttribute("aria-expanded", "false");
       }
-      if (detail) {
-        detail.hidden = true;
-      }
       row.classList.remove("is-open");
-      if (location.hash === "#" + row.id) {
-        history.replaceState(null, "", location.pathname + location.search);
+      syncHash(row, false);
+
+      if (!detail) {
+        hideDetail(row, detail);
+        return;
       }
-      if (openRow === row) {
-        openRow = null;
+
+      if (reduceMotion() || detail.hidden) {
+        hideDetail(row, detail);
+        return;
       }
+
+      var done = false;
+      function finish() {
+        if (done) {
+          return;
+        }
+        done = true;
+        clearPending(row);
+        hideDetail(row, detail);
+      }
+      function onEnd(e) {
+        if (e.target === detail) {
+          finish();
+        }
+      }
+      detail.addEventListener("transitionend", onEnd);
+      pending.set(row, {
+        detail: detail,
+        onEnd: onEnd,
+        timer: setTimeout(finish, CLOSE_MS)
+      });
     }
 
     function open(row, scrollIntoView) {
@@ -70,6 +138,7 @@
       if (openRow && openRow !== row) {
         close(openRow);
       }
+      clearPending(row);
       var btn = row.querySelector(".catalog-toggle");
       var detail = detailFor(row);
       if (btn) {
@@ -78,14 +147,18 @@
       if (detail) {
         detail.hidden = false;
       }
-      row.classList.add("is-open");
-      if (location.hash !== "#" + row.id) {
-        history.replaceState(null, "", "#" + row.id);
+      function markOpen() {
+        row.classList.add("is-open");
       }
+      if (reduceMotion()) {
+        markOpen();
+      } else {
+        requestAnimationFrame(markOpen);
+      }
+      syncHash(row, true);
       openRow = row;
       if (scrollIntoView) {
-        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        row.scrollIntoView({ block: "start", behavior: reduce ? "auto" : "smooth" });
+        row.scrollIntoView({ block: "start", behavior: reduceMotion() ? "auto" : "smooth" });
       }
     }
 
@@ -106,7 +179,10 @@
         });
       }
       row.addEventListener("click", function (e) {
-        if (e.target.closest("a") || e.target.closest(".catalog-toggle")) {
+        if (e.target.closest("a")) {
+          return;
+        }
+        if (e.target.closest(".catalog-toggle")) {
           return;
         }
         if (btn) {

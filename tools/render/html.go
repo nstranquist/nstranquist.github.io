@@ -38,26 +38,32 @@ func renderIndex(cat Catalog) string {
 	b.WriteString("<section class=\"section wrap\" id=\"catalog\">\n")
 	b.WriteString("<div class=\"section-head\"><h2>Catalog</h2>")
 	fmt.Fprintf(&b, "<p class=\"meta\">%d with GitHub releases</p></div>\n", len(cat.Featured))
-	b.WriteString("<div class=\"catalog-board\"><table>\n")
-	b.WriteString("<caption>Open a name for the write-up. Versions open GitHub.</caption>\n")
-	b.WriteString("<thead><tr><th></th><th>Product</th><th>Kind</th><th>Stack</th><th>License</th><th>Release</th></tr></thead>\n<tbody>\n")
+	b.WriteString("<div class=\"catalog-board\">\n")
+	b.WriteString("<div class=\"catalog-table\" role=\"table\">\n")
+	b.WriteString("<p class=\"catalog-caption\">Open a name for the write-up. Versions open GitHub.</p>\n")
+	b.WriteString("<div class=\"catalog-head\" role=\"row\">")
+	b.WriteString("<div role=\"columnheader\" class=\"idx\"></div>")
+	b.WriteString("<div role=\"columnheader\">Product</div>")
+	b.WriteString("<div role=\"columnheader\">Kind</div>")
+	b.WriteString("<div role=\"columnheader\">Stack</div>")
+	b.WriteString("<div role=\"columnheader\">License</div>")
+	b.WriteString("<div role=\"columnheader\">Release</div>")
+	b.WriteString("</div>\n")
 	for i, p := range cat.Featured {
 		slug := strings.TrimPrefix(p.ID, "product.")
 		wid := workID(p)
 		detailID := "detail-" + slug
 		toggleID := "toggle-" + slug
-		fmt.Fprintf(&b, "<tr class=\"catalog-item\" id=\"%s\" data-accent=\"%s\">", xml(wid), xml(accentFor(p.ID)))
-		fmt.Fprintf(&b, "<td data-label=\"#\" class=\"idx\">%02d</td>", i+1)
-		fmt.Fprintf(&b, "<td data-label=\"Product\"><button type=\"button\" class=\"catalog-toggle\" aria-expanded=\"false\" aria-controls=\"%s\" id=\"%s\">", xml(detailID), xml(toggleID))
-		fmt.Fprintf(&b, "<span class=\"product-name\">%s</span><span class=\"product-id\">%s</span></button></td>", xml(p.Name), xml(p.Repo))
-		fmt.Fprintf(&b, "<td data-label=\"Kind\" class=\"lane\">%s</td>", xml(p.Lane))
-		fmt.Fprintf(&b, "<td data-label=\"Stack\" class=\"stack\">%s</td>", xml(p.Language))
-		fmt.Fprintf(&b, "<td data-label=\"License\"><span class=\"license\">%s</span></td>", xml(p.License))
-		fmt.Fprintf(&b, "<td data-label=\"Release\">%s%s</a></td></tr>\n", href(p.ProofURL, "proof"), xml(p.Proof))
-
-		b.WriteString("<tr class=\"catalog-detail-row\"><td colspan=\"6\">")
+		fmt.Fprintf(&b, "<div class=\"catalog-item\" id=\"%s\" data-accent=\"%s\" role=\"row\">", xml(wid), xml(accentFor(p.ID)))
+		fmt.Fprintf(&b, "<button type=\"button\" class=\"catalog-toggle\" aria-expanded=\"false\" aria-controls=\"%s\" id=\"%s\">", xml(detailID), xml(toggleID))
+		fmt.Fprintf(&b, "<span class=\"idx\">%02d</span>", i+1)
+		fmt.Fprintf(&b, "<span class=\"product\"><span class=\"product-name\">%s</span><span class=\"product-id\">%s</span></span>", xml(p.Name), xml(p.Repo))
+		fmt.Fprintf(&b, "<span class=\"lane\">%s</span>", xml(p.Lane))
+		fmt.Fprintf(&b, "<span class=\"stack\">%s</span>", xml(p.Language))
+		fmt.Fprintf(&b, "<span class=\"license\">%s</span>", xml(p.License))
+		b.WriteString("<span class=\"chevron\" aria-hidden=\"true\"></span></button>")
+		fmt.Fprintf(&b, "%s%s</a>", href(p.ProofURL, "proof"), xml(p.Proof))
 		fmt.Fprintf(&b, "<div class=\"catalog-detail\" id=\"%s\" role=\"region\" aria-labelledby=\"%s\" hidden>", xml(detailID), xml(toggleID))
-		b.WriteString("<div class=\"catalog-detail-inner\"><div class=\"catalog-detail-body\">")
 		if p.Summary != "" {
 			fmt.Fprintf(&b, "<p class=\"work-summary\">%s</p>", xml(p.Summary))
 		}
@@ -82,13 +88,13 @@ func renderIndex(cat Catalog) string {
 			}
 			fmt.Fprintf(&b, "%s%s</a>", href(p.DemoURL, ""), xml(label))
 		}
-		b.WriteString("</p></div></div></div></td></tr>\n")
+		b.WriteString("</p></div></div>\n")
 	}
 	note := collapseWS(cat.Footnote)
 	if note == "" {
 		note = "Source is on GitHub."
 	}
-	b.WriteString("</tbody></table>\n<p class=\"catalog-note\">" + xml(note) + "</p></div>\n</section>\n")
+	b.WriteString("</div>\n<p class=\"catalog-note\">" + xml(note) + "</p></div>\n</section>\n")
 
 	if len(cat.AlsoPublic) > 0 {
 		b.WriteString("<section class=\"section wrap\" id=\"also-public\">\n")
@@ -150,7 +156,7 @@ func pageHead(id Identity, title, description, canonical, skip, skipLabel string
 	b.WriteString("<meta name=\"theme-color\" content=\"#10100f\">\n")
 	b.WriteString("<link rel=\"icon\" href=\"assets/mark.svg\" type=\"image/svg+xml\">\n")
 	b.WriteString("<link rel=\"stylesheet\" href=\"site.css\">\n")
-	b.WriteString("<noscript><style>.catalog-detail[hidden]{display:block}.catalog-detail-inner{grid-template-rows:1fr}.catalog-detail-body{opacity:1}</style></noscript>\n")
+	b.WriteString("<noscript><style>.catalog-detail[hidden]{display:block}</style></noscript>\n")
 	b.WriteString("<script src=\"site.js\" defer></script>\n")
 	b.WriteString("</head>\n<body>\n")
 	fmt.Fprintf(&b, "<a class=\"skip\" href=\"%s\">%s</a>\n", xml(skip), xml(skipLabel))
