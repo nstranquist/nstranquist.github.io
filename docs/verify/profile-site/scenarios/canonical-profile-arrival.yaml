@@ -1,0 +1,27 @@
+name: canonical-profile-arrival
+session: canonical-profile-proof
+vars:
+  base: https://nstranquist.github.io/
+steps:
+  - verb: navigate
+    url: ${base}
+  - verb: assert_text
+    selector: h1
+    assert:
+      contains: Nico Stranquist
+  - verb: assert_visible
+    selector: "#catalog"
+  - verb: assert_text
+    selector: body
+    assert:
+      contains: Public GitHub work
+  - verb: console
+    console:
+      reload: true
+      window: 2s
+      kind: js
+      fail_on_error: true
+  - verb: screenshot
+    label: Canonical public profile
+    path: nicos-dev/docs/verify/web-products/nstranquist-github-pages/evidence/canonical-profile.png
+    screenshot_mode: full-page
