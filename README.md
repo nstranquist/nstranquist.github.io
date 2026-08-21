@@ -10,7 +10,7 @@ renders on [github.com/nstranquist](https://github.com/nstranquist).
 `404.html`. Selected work has a GitHub Release. A second list names other
 public source, including repos without a tag.
 
-PR previews deploy to Cloudflare Pages and the URL is commented on the PR. Production stays https://nstranquist.github.io/
+Run previews on localhost. Production stays on https://nstranquist.github.io/.
 
 ```sh
 make verify
