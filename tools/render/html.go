@@ -9,9 +9,21 @@ import (
 // href emits an <a> opening tag. Off-site http(s) URLs open in a new tab
 // with rel=noopener. Same-site targets (./, #…) stay in this tab.
 func href(url string, class string) string {
+	return trackedHref(url, class, "", "", "")
+}
+
+// trackedHref emits the reviewed aggregate-event vocabulary used by site.js.
+// It never adds a visitor identifier or a free-form value to the page.
+func trackedHref(url, class, event, surface, product string) string {
 	attrs := `href="` + xml(url) + `"`
 	if class != "" {
 		attrs += ` class="` + xml(class) + `"`
+	}
+	if event != "" {
+		attrs += ` data-arrival-event="` + xml(event) + `" data-arrival-surface="` + xml(surface) + `"`
+		if product != "" {
+			attrs += ` data-arrival-product="` + xml(product) + `"`
+		}
 	}
 	if strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://") {
 		attrs += ` target="_blank" rel="noopener noreferrer"`
@@ -63,7 +75,7 @@ func renderIndex(cat Catalog) string {
 		fmt.Fprintf(&b, "<span class=\"stack\">%s</span>", xml(p.Language))
 		fmt.Fprintf(&b, "<span class=\"license\">%s</span>", xml(p.License))
 		b.WriteString("</span></button>")
-		fmt.Fprintf(&b, "%s%s</a>", href(p.ProofURL, "proof"), xml(p.Proof))
+		fmt.Fprintf(&b, "%s%s</a>", trackedHref(p.ProofURL, "proof", "product_proof", "catalog", p.ID), xml(p.Proof))
 		fmt.Fprintf(&b, "<div class=\"catalog-detail\" id=\"%s\" role=\"region\" aria-labelledby=\"%s\" hidden>", xml(detailID), xml(toggleID))
 		b.WriteString("<div class=\"catalog-reveal\"><div class=\"catalog-panel\">")
 		if p.Summary != "" {
@@ -82,13 +94,15 @@ func renderIndex(cat Catalog) string {
 			}
 		}
 		b.WriteString("<p class=\"work-actions\">")
-		fmt.Fprintf(&b, "%sSource</a>%sRelease %s</a>", href(p.URL, ""), href(p.ProofURL, ""), xml(p.Proof))
+		fmt.Fprintf(&b, "%sSource</a>%sRelease %s</a>",
+			trackedHref(p.URL, "", "product_source", "catalog", p.ID),
+			trackedHref(p.ProofURL, "", "product_proof", "catalog", p.ID), xml(p.Proof))
 		if p.DemoURL != "" {
 			label := p.DemoLabel
 			if label == "" {
 				label = "Live demo"
 			}
-			fmt.Fprintf(&b, "%s%s</a>", href(p.DemoURL, ""), xml(label))
+			fmt.Fprintf(&b, "%s%s</a>", trackedHref(p.DemoURL, "", "product_demo", "catalog", p.ID), xml(label))
 		}
 		b.WriteString("</p></div></div></div></div>\n")
 	}
@@ -104,8 +118,8 @@ func renderIndex(cat Catalog) string {
 		b.WriteString("<ul class=\"also-public\">\n")
 		for _, p := range cat.AlsoPublic {
 			fmt.Fprintf(&b, "<li><strong>%s%s</a></strong> — %s <span class=\"also-meta\">%s · %s · %s%s</a></span></li>\n",
-				href(p.URL, ""), xml(p.Name), xml(collapseWS(p.Summary)),
-				xml(p.Language), xml(p.License), href(p.ProofURL, "proof"), xml(p.Proof))
+				trackedHref(p.URL, "", "product_source", "also-public", p.ID), xml(p.Name), xml(collapseWS(p.Summary)),
+				xml(p.Language), xml(p.License), trackedHref(p.ProofURL, "proof", "product_proof", "also-public", p.ID), xml(p.Proof))
 		}
 		b.WriteString("</ul>\n</section>\n")
 	}
@@ -180,7 +194,7 @@ func siteHeader(id Identity, onHome bool, alsoPublic bool) string {
 	}
 	fmt.Fprintf(&b, "%s</a>\n%sGitHub</a>\n",
 		navItem(approach, "approach", "Approach"),
-		href(id.GitHub, ""))
+		trackedHref(id.GitHub, "", "github_profile", "nav", ""))
 	b.WriteString("</nav>\n")
 	b.WriteString("<button type=\"button\" class=\"theme-toggle\" data-theme-toggle aria-label=\"Color theme: System. Switch theme\">System</button>\n")
 	b.WriteString("</div>\n</header>\n")
@@ -191,7 +205,7 @@ func siteFooter(id Identity, note string) string {
 	if collapseWS(note) == "" {
 		note = "Source is on GitHub."
 	}
-	return "<footer class=\"site-footer\">\n<div class=\"wrap\">\n<div><p class=\"brand-name\">" + xml(id.Name) + "</p><p class=\"boundary\">" + xml(collapseWS(note)) + "</p></div>\n<div class=\"footer-links\">" + href(id.GitHub, "") + "GitHub</a>" + href(id.LinkedIn, "") + "LinkedIn</a></div>\n</div>\n</footer>\n"
+	return "<footer class=\"site-footer\">\n<div class=\"wrap\">\n<div><p class=\"brand-name\">" + xml(id.Name) + "</p><p class=\"boundary\">" + xml(collapseWS(note)) + "</p></div>\n<div class=\"footer-links\">" + trackedHref(id.GitHub, "", "github_profile", "footer", "") + "GitHub</a>" + trackedHref(id.LinkedIn, "", "linkedin_profile", "footer", "") + "LinkedIn</a></div>\n</div>\n</footer>\n"
 }
 
 func markSVG() string {

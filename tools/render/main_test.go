@@ -169,18 +169,58 @@ func TestHrefSplitsOutboundAndSameSite(t *testing.T) {
 	}
 }
 
+func TestAggregateArrivalMarkupUsesOnlyTypedPublicValues(t *testing.T) {
+	home := renderIndex(loadTestCatalog(t))
+	for _, want := range []string{
+		`data-arrival-event="github_profile" data-arrival-surface="nav"`,
+		`data-arrival-event="linkedin_profile" data-arrival-surface="footer"`,
+		`data-arrival-event="product_source" data-arrival-surface="catalog" data-arrival-product="product.docs-puller"`,
+		`data-arrival-event="product_proof" data-arrival-surface="catalog" data-arrival-product="product.docs-puller"`,
+		`data-arrival-event="product_demo" data-arrival-surface="catalog" data-arrival-product="product.docs-puller"`,
+		`data-arrival-event="product_source" data-arrival-surface="also-public" data-arrival-product="product.wip-commit"`,
+	} {
+		if !strings.Contains(home, want) {
+			t.Errorf("rendered page is missing typed aggregate-arrival markup %q", want)
+		}
+	}
+	for _, forbidden := range []string{"visitor-id", "fingerprint", "user-agent", "data-arrival-referrer"} {
+		if strings.Contains(strings.ToLower(home), forbidden) {
+			t.Errorf("rendered page contains privacy-unsafe field %q", forbidden)
+		}
+	}
+}
+
+func TestAggregateArrivalScriptHonorsPrivacySignals(t *testing.T) {
+	body, err := os.ReadFile(filepath.Join(repoRoot(t), "site.js"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	script := string(body)
+	for _, want := range []string{
+		"navigator.globalPrivacyControl === true",
+		`doNotTrack === "1"`,
+		`credentials: "omit"`,
+		`referrerPolicy: "no-referrer"`,
+		"profile-arrivals.nstranquist.workers.dev/e",
+	} {
+		if !strings.Contains(script, want) {
+			t.Errorf("site.js is missing aggregate-arrival contract %q", want)
+		}
+	}
+}
+
 func TestRenderedPagesLinkContract(t *testing.T) {
 	cat := loadTestCatalog(t)
 	home := renderIndex(cat)
 	missing := render404(cat)
 	assertLinkContract(t, "index", home)
 	assertLinkContract(t, "404", missing)
+	anchors := parseAnchors(home)
 	for _, p := range append(append([]Product{}, cat.Featured...), cat.AlsoPublic...) {
-		if !strings.Contains(home, `href="`+p.URL+`" target="_blank" rel="noopener noreferrer"`) {
+		if !hasAnchorHref(anchors, p.URL) {
 			t.Errorf("index missing new-tab product link for %s", p.ID)
 		}
-		if !strings.Contains(home, `href="`+p.ProofURL+`" target="_blank" rel="noopener noreferrer"`) &&
-			!strings.Contains(home, `href="`+p.ProofURL+`" class="proof" target="_blank" rel="noopener noreferrer"`) {
+		if !hasAnchorHref(anchors, p.ProofURL) {
 			t.Errorf("index missing new-tab proof link for %s", p.ID)
 		}
 	}
@@ -232,6 +272,15 @@ func TestRenderedPagesLinkContract(t *testing.T) {
 	if strings.Contains(home, `id="work"`) || strings.Contains(home, "Selected work") {
 		t.Fatal("index must not render a standalone Selected work section")
 	}
+}
+
+func hasAnchorHref(anchors []parsedAnchor, href string) bool {
+	for _, anchor := range anchors {
+		if anchor.href == href && anchor.target == "_blank" && strings.Contains(anchor.rel, "noopener") {
+			return true
+		}
+	}
+	return false
 }
 
 func TestCatalogRowsExpandInPlace(t *testing.T) {

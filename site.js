@@ -28,6 +28,51 @@
     });
   }
 
+  (function aggregateArrivals() {
+    var endpoint = "https://profile-arrivals.nstranquist.workers.dev/e";
+    var doNotTrack = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+    if (navigator.globalPrivacyControl === true || doNotTrack === "1" || doNotTrack === "yes") {
+      return;
+    }
+
+    function send(payload) {
+      var body = JSON.stringify(payload);
+      if (navigator.sendBeacon && navigator.sendBeacon(endpoint, body)) {
+        return;
+      }
+      if (window.fetch) {
+        window.fetch(endpoint, {
+          method: "POST",
+          body: body,
+          headers: { "content-type": "text/plain;charset=UTF-8" },
+          keepalive: true,
+          credentials: "omit",
+          referrerPolicy: "no-referrer",
+        }).catch(function () {});
+      }
+    }
+
+    if (location.pathname === "/" || location.pathname === "/index.html") {
+      send({ event: "pageview", surface: "home" });
+    }
+
+    document.addEventListener("click", function (event) {
+      var link = event.target.closest && event.target.closest("[data-arrival-event]");
+      if (!link) {
+        return;
+      }
+      var payload = {
+        event: link.getAttribute("data-arrival-event"),
+        surface: link.getAttribute("data-arrival-surface"),
+      };
+      var product = link.getAttribute("data-arrival-product");
+      if (product) {
+        payload.product = product;
+      }
+      send(payload);
+    });
+  })();
+
   (function catalogAccordion() {
     var items = document.querySelectorAll(".catalog-item");
     if (!items.length) {
